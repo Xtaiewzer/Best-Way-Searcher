@@ -1,16 +1,18 @@
-# This is a sample Python script.
+import pygame
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+win_width = 1280
+win_height = 800
+win_fps = 30
+pygame.init()
+screen = pygame.display.set_mode((win_width, win_height))
+clock = pygame.time.Clock()
 
+running = True
+while running:
+    clock.tick(win_fps)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    pygame.display.flip()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('Дайте балав')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+pygame.quit()
