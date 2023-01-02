@@ -8,6 +8,7 @@ screen = pygame.display.set_mode((win_width, win_height))
 clock = pygame.time.Clock()
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 start_pos = (0, 0)
 start_pos_flag = False
@@ -30,7 +31,13 @@ def ending():
         end_pos_flag = True
         pygame.draw.rect(screen, RED, (end_pos[0], end_pos[1], 10, 10))
 
+def drawing():
+    pressed = pygame.mouse.get_pressed()
+    pos = pygame.mouse.get_pos()
+    if pressed[0]:
+        pygame.draw.rect(screen, GREEN, (pos[0], pos[1], 10, 10))
 
+pygame.display.set_caption('The Best Project Ever')
 running = True
 while running:
     clock.tick(win_fps)
@@ -41,6 +48,8 @@ while running:
             starting()
         elif not end_pos_flag:
             ending()
+        else:
+            drawing()
 
     pygame.display.flip()
 
