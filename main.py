@@ -6,7 +6,7 @@ win_fps = 60
 pygame.init()
 screen = pygame.display.set_mode((win_width, win_height))
 clock = pygame.time.Clock()
-BLUE = (100, 150, 255)
+BLUE = (0, 140, 240)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 GRAY = (70, 70, 70)
