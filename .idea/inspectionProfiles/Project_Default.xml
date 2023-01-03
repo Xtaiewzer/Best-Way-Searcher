@@ -16,6 +16,7 @@
         <list>
           <option value="str.*" />
           <option value="list.*" />
+          <option value="main.lines" />
         </list>
       </option>
     </inspection_tool>
