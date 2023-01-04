@@ -28,10 +28,16 @@ def bfs(field, s, t):
     cur = t
     path = []
     way = []
-    while cur is not None:
+    while 1:
         path.append(cur)
-        cur = p[cur[0]][cur[1]]
+        next = p[cur[0]][cur[1]]
+        if next == None:
+            break
+        way.append((cur[0] - next[0], cur[1] - next[1]))
+        cur = next
     path.reverse()
+    way.reverse()
+    print(way)
 
     # Эта хуйня блять не работает
     # Тут короче должена получиться карта с путём а не эта хуйня
