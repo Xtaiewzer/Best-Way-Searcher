@@ -1,20 +1,26 @@
 import pygame
+import sys
 
-win_width = 1280
-win_height = 800
+SCALE = 5
+win_width = 100 * SCALE
+win_height = 100 * SCALE
 win_fps = 60
 pygame.init()
 screen = pygame.display.set_mode((win_width, win_height))
 clock = pygame.time.Clock()
-BLUE = (0, 140, 240)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-GRAY = (70, 70, 70)
-SIDE = 10
-HSIDE = SIDE // 2
-QSIDE = SIDE // 4
+BLUE = (0, 140, 240, 255)
+RED = (255, 0, 0, 255)
+GREEN = (0, 255, 0, 255)
+GRAY = (70, 70, 70, 255)
+SIDE = 1 * SCALE
+HALF_SIDE = SIDE // 2
+if HALF_SIDE >= 0:
+    HALF_SIDE = 1
+START = pygame.Surface((SIDE, SIDE))
+START.fill(BLUE)
+END = pygame.Surface((SIDE, SIDE))
+END.fill(RED)
 char_image = pygame.image.load('character.png')
-
 start_pos = (0, 0)
 start_pos_flag = False
 end_pos = (0, 0)
@@ -29,7 +35,6 @@ def starting():
     if event.type == pygame.MOUSEBUTTONDOWN:
         start_pos = event.pos
         start_pos_flag = True
-        pygame.draw.rect(screen, BLUE, (start_pos[0] - HSIDE, start_pos[1] - HSIDE, SIDE, SIDE))
 
 
 def ending():
@@ -37,7 +42,6 @@ def ending():
     if event.type == pygame.MOUSEBUTTONDOWN:
         end_pos = event.pos
         end_pos_flag = True
-        pygame.draw.rect(screen, RED, (end_pos[0] - HSIDE, end_pos[1] - HSIDE, SIDE, SIDE))
 
 
 def drawing(e):
@@ -50,7 +54,7 @@ def drawing(e):
         drawing_lines(e, pos)
     else:
         if pressed[0]:
-            pygame.draw.circle(screen, GREEN, pos, HSIDE)
+            pygame.draw.circle(screen, GREEN, pos, HALF_SIDE)
 
 
 def drawing_lines(e, p):
@@ -58,9 +62,9 @@ def drawing_lines(e, p):
         button = e.button
         if button == 1:
             pods.append(p)
-            pygame.draw.circle(screen, GREEN, p, QSIDE)
+            pygame.draw.circle(screen, GREEN, p, HALF_SIDE)
         elif button == 3 and len(pods) >= 2:
-            pygame.draw.lines(screen, GREEN, False, pods, HSIDE)
+            pygame.draw.lines(screen, GREEN, False, pods, SIDE)
             pods.clear()
 
 
@@ -75,26 +79,44 @@ class Character(pygame.sprite.Sprite):
 pygame.display.set_caption('The Best Project Ever')
 screen.fill(GRAY)
 pygame.display.update()
-running = True
-while running:
+phase_drawing = True
+pygame.draw.rect(screen, GREEN, (0, 0, win_width, win_height), SIDE)
+
+while phase_drawing:
     clock.tick(win_fps)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            sys.exit()
         if not start_pos_flag:
             starting()
+            pygame.draw.rect(screen, GREEN, (0, 0, SIDE, SIDE))
         elif not end_pos_flag:
             ending()
-        elif start_pos_flag and end_pos_flag and not moving_flag:
+            pygame.draw.rect(screen, GREEN, (0, 0, SIDE, SIDE))
+        elif start_pos_flag and end_pos_flag:
             drawing(event)
-            all_sprites = pygame.sprite.Group()
-            char = Character()
-            all_sprites.add(char)
-            all_sprites.draw(screen)
+            # all_sprites = pygame.sprite.Group()
+            # char = Character()
+            # all_sprites.add(char)
+            # all_sprites.draw(screen)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                moving_flag = True
-
+                phase_drawing = False
+    screen.blit(START, start_pos)
+    screen.blit(END, end_pos)
     pygame.display.flip()
 
-pygame.quit()
+scheme = ''
+for x in range(0, win_width, SCALE):
+    for y in range(0, win_height, SCALE):
+        pix = screen.get_at((x, y))
+        if pix == GREEN:
+            scheme += '#'
+        elif pix == BLUE:
+            scheme += 'S'
+        elif pix == RED:
+            scheme += 'T'
+        else:
+            scheme += '.'
+    scheme += '\n'
+print(scheme)
