@@ -16,6 +16,7 @@ BLUE = (0, 140, 240, 255)
 RED = (255, 0, 0, 255)
 GREEN = (0, 255, 0, 255)
 GRAY = (70, 70, 70, 255)
+ORANGE = (255, 79, 0, 255)
 
 # Создание программы
 pygame.init()
@@ -124,8 +125,8 @@ pygame.draw.rect(screen, GREEN, (0, 0, win_width, win_height), SCALE)  # Рис�
 while phase_drawing:
     clock.tick(win_fps)  # 1 цикл длятся 1/60 секунду
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # Если нажать на крестик или Alt + F4, то
-            sys.exit()  # Программа закроется
+        if event.type == pygame.QUIT:  # Если нажать на крестик или использовать
+            sys.exit()  # Сочетание горячих клавиш Alt + F4, то рограмма закроется
         if not start_pos_flag:  # Создание точки старта
             starting()
             pygame.draw.rect(screen, GREEN, (0, 0, SCALE, SCALE))
@@ -172,11 +173,25 @@ print(scheme)
 scheme = scheme.split('\n')  # Преобразование получившейся строки в массив строк
 
 # Создание спрайта персонажа
-all_sprites = pygame.sprite.Group()
-char = Character()
-all_sprites.add(char)
-all_sprites.draw(screen)
+# all_sprites = pygame.sprite.Group()
+# char = Character()
+# all_sprites.add(char)
+# all_sprites.draw(screen)
 
 way = SWM(scheme, s, t)  # Получаем путь от точки старта до конечной точки и расстояние этого пути
-print(way[1])
-print(way[0])
+rect_hero = pygame.Rect(start_pos[0], start_pos[1], SCALE, SCALE)
+win_fps *= 2
+pygame.display.set_caption('Drawing the shortest way...')
+for i in way[0]:
+    pygame.draw.rect(screen, ORANGE, rect_hero, SCALE, SCALE)
+    pygame.display.update(rect_hero)
+    rect_hero.x += i[0] * SCALE
+    rect_hero.y += i[1] * SCALE
+    clock.tick(win_fps)
+
+phase_moving = True
+pygame.display.set_caption('The shortest way was drawn!')
+while phase_moving:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()

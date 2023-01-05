@@ -56,31 +56,31 @@ def SWM(field, s, t):
     # По максимально короткому пути и длину этого самого пути
 
 
-def test():
-    file = open("path.txt")
-    field = file.readlines()
-    n = len(field)
-    # m = len(field[0]) - 1
-    s = None
-    t = None
-
-    for i in range(n):
-        line = field[i]
-        sf = line.find('S')
-        if sf != -1:
-            s = (i, sf)
-        tf = line.find('T')
-        if tf != -1:
-            t = (i, tf)
-
-    st = ''
-    for i in field:
-        st += i
-    print(st)
-    print(s, t)
-    way = SWM(field, s, t)
-    print(way[0])
-    print(way[1])
-
-
-test()
+# def test():
+#     file = open("path.txt")
+#     field = file.readlines()
+#     n = len(field)
+#     # m = len(field[0]) - 1
+#     s = None
+#     t = None
+#
+#     for i in range(n):
+#         line = field[i]
+#         sf = line.find('S')
+#         if sf != -1:
+#             s = (i, sf)
+#         tf = line.find('T')
+#         if tf != -1:
+#             t = (i, tf)
+#
+#     st = ''
+#     for i in field:
+#         st += i
+#     print(st)
+#     print(s, t)
+#     way = SWM(field, s, t)
+#     print(way[0])
+#     print(way[1])
+#
+#
+# test()
