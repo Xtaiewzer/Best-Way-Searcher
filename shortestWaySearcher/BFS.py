@@ -30,7 +30,7 @@ def SWM(field, s, t):
                 p[nx][ny] = (x, y)  # Отмечаем путь в соответствующем двумерном массиве
                 used[nx][ny] = True  # Отмечаем клетку как проверенную
                 queue.append((nx, ny))  # Добавляем её соседей в соответствующий массив
-    # Расстояние из клетки в соседнюю клетку всегда равно единице
+    # Расстояние из клетки в соседнюю клетку всегда равно единице.
     # То есть, из клетки-соседа нужно пройти путь, больший на 1, чем путь
     # Из исходной клетки, только если это не предыдущая клетка
     # Путь из предыдущей клетки всегда на 1 меньше, чем из исходной
@@ -53,29 +53,34 @@ def SWM(field, s, t):
     # Из начальной точки s в конечную точку t по максимально короткому пути
     return (way, d[t[0]][t[1]])  # Возвращаем кортеж из списка ходов, которые необходимо
     # Совершить для того, чтобы из начальной точки s, чтобы попасть в конечную точку t
-    # По максимально короткому пути и длинну этого самого пути
+    # По максимально короткому пути и длину этого самого пути
 
-# if __name__ == "__main__":
-#     file = open("path.txt")
-#     filelines = file.readlines()
-#     n = len(filelines)
-#     m = len(filelines[0]) - 1
-#     s = None
-#     t = None
-#
-#     for i in range(n):
-#         line = filelines[i]
-#         line = line.strip()
-#         sf = line.find('S')
-#         if sf != -1:
-#             s = (i, sf)
-#         tf = line.find('T')
-#         if tf != -1:
-#             t = (i, tf)
-#
-#     st = ''
-#     for i in filelines:
-#         st += i
-#     print(st)
-#     print(s, t)
-#     bfs(filelines, s, t)
+
+def test():
+    file = open("path.txt")
+    field = file.readlines()
+    n = len(field)
+    # m = len(field[0]) - 1
+    s = None
+    t = None
+
+    for i in range(n):
+        line = field[i]
+        sf = line.find('S')
+        if sf != -1:
+            s = (i, sf)
+        tf = line.find('T')
+        if tf != -1:
+            t = (i, tf)
+
+    st = ''
+    for i in field:
+        st += i
+    print(st)
+    print(s, t)
+    way = SWM(field, s, t)
+    print(way[0])
+    print(way[1])
+
+
+test()

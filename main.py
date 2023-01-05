@@ -152,7 +152,7 @@ while phase_drawing:
 scheme = ''  # Массив строк
 s = None  # Координата точки старта
 t = None  # Координата конечной точки
-pygame.display.set_caption('Data parsing...')  # Забавная подсказка в названии окна программы
+pygame.display.set_caption('Searching the shortest way...')  # Забавная подсказка в названии окна программы
 for x in range(0, win_width, SCALE):  # Построчный перебор каждого пикселя на экране по оси x
     for y in range(0, win_height, SCALE):  # Построчный перебор каждого пикселя на экране по оси y
         pos = (x // 5, y // 5)  # Текущая позиция
@@ -178,3 +178,5 @@ all_sprites.add(char)
 all_sprites.draw(screen)
 
 way = SWM(scheme, s, t)  # Получаем путь от точки старта до конечной точки и расстояние этого пути
+print(way[1])
+print(way[0])
