@@ -169,7 +169,6 @@ for x in range(0, win_width, SCALE):  # Построчный перебор ка
         else:  # Обработка для пустых (серых) точек на экране
             scheme += '.'
     scheme += '\n'  # Добавление строки в массив
-print(scheme)
 scheme = scheme.split('\n')  # Преобразование получившейся строки в массив строк
 
 # Создание спрайта персонажа
@@ -190,7 +189,7 @@ for i in way[0]:
     clock.tick(win_fps)
 
 phase_moving = True
-pygame.display.set_caption('The shortest way was drawn!')
+pygame.display.set_caption('The shortest way was drawn! Its length is: ' + str(way[1]))
 while phase_moving:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
