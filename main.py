@@ -27,6 +27,8 @@ START.fill(BLUE)
 END = pygame.Surface((SCALE, SCALE))
 END.fill(RED)
 char_image = pygame.image.load('character.png')
+dots_s = pygame.mixer.Sound('sounds/dots.ogg')
+lines_s = pygame.mixer.Sound('sounds/lines.ogg')
 
 # Позиции и переменные
 start_pos = None
@@ -52,6 +54,7 @@ def starting():
             start_pos = default_start_pos  # Нельзя создать точку на границе поля
         else:
             start_pos = pos
+            dots_s.play()
 
         start_pos_flag = True
 
@@ -72,6 +75,7 @@ def ending():
             end_pos = default_end_pos  # Нельзя создать точку на границе поля или на точке старта
         else:
             end_pos = pos
+            dots_s.play()
 
         end_pos_flag = True
         pygame.display.set_caption('Now, draw the environment!')  # Забавная подсказка в названии окна программы
@@ -103,6 +107,7 @@ def drawing_lines(e, p):
             pygame.draw.circle(screen, GREEN, p, HALF_SCALE)  # Рисование точек
         elif button == 3 and len(pods) >= 2:  # Если точек больше 2 и нажата ПКМ, они
             pygame.draw.lines(screen, GREEN, False, pods, SCALE)  # Соединяются по очереди
+            lines_s.play()
             pods.clear()  # Очистка массива точек
 
 
