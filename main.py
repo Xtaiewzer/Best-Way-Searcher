@@ -43,7 +43,7 @@ end_pos_flag = False
 moving_flag = False
 default_start_pos = (SCALE * 2, SCALE * 2)
 default_end_pos = (win_width - SCALE * 2, win_height - SCALE * 2)
-pods = []
+dots = []
 lines = True
 
 
@@ -93,7 +93,8 @@ def drawing(e):
     pressed = pygame.mouse.get_pressed()  # Нажатые клавиши
     pos = pygame.mouse.get_pos()  # Позиция курсора мыши
 
-    if e.type == pygame.KEYDOWN and (e.mod & pygame.KMOD_CTRL):  # Переключение режима:
+    if e.type == pygame.KEYDOWN and (e.mod & pygame.KMOD_CTRL) \
+            and not len(dots):  # Переключение режима:
         lines = not lines  # Нажатием на ctrl можно чередовать режим рисования линий режимом ластика
 
     if lines:  # Режим рисования линий
@@ -108,12 +109,12 @@ def drawing_lines(e, p):
     if e.type == pygame.MOUSEBUTTONDOWN:  # Если нажать ЛКМ, то
         button = e.button  # В этом месте экрана будет нарисована точка
         if button == 1:  # Если нажать ПКМ, то по очереди будут соединены все точки на экране
-            pods.append(p)  # Соединены все точки на экране
+            dots.append(p)  # Соединены все точки на экране
             pygame.draw.circle(screen, GREEN, p, HALF_SCALE)  # Рисование точек
             dots_s.play()
-        elif button == 3 and len(pods) >= 2:  # Если точек больше 2 и нажата ПКМ, они
-            pygame.draw.lines(screen, GREEN, False, pods, SCALE * LINES_SCALE)  # Соединяются по очереди
-            pods.clear()  # Очистка массива точек
+        elif button == 3 and len(dots) >= 2:  # Если точек больше 2 и нажата ПКМ, они
+            pygame.draw.lines(screen, GREEN, False, dots, SCALE * LINES_SCALE)  # Соединяются по очереди
+            dots.clear()  # Очистка массива точек
             lines_s.play()
 
 
@@ -201,7 +202,7 @@ if way[1] < INF:
         rect_hero.x += i[0] * COMPRESSION
         rect_hero.y += i[1] * COMPRESSION
         clock.tick(win_fps)
-    pygame.display.set_caption('The shortest way fas drawn! Its length is: ' + str(way[1]))
+    pygame.display.set_caption('The shortest way fas drawn! Its length is: ' + str(way[1] * COMPRESSION))
 else:
     pygame.display.set_caption('I am sorry, but I cannot find the shortest way :(')
 
