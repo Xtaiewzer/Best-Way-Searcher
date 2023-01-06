@@ -1,6 +1,6 @@
 import pygame
 import sys
-from shortestWaySearcher.BFS import *
+from shortestWaySearcher.BFS import SWM
 
 # Основные параметры программы:
 SCALE = 5  # Масштаб
@@ -16,7 +16,7 @@ BLUE = (0, 140, 240, 255)
 RED = (255, 0, 0, 255)
 GREEN = (0, 255, 0, 255)
 GRAY = (70, 70, 70, 255)
-ORANGE = (255, 104, 0, 255)
+ORANGE = (255, 79, 0, 255)
 
 # Создание программы
 pygame.init()
@@ -27,6 +27,8 @@ START.fill(BLUE)
 END = pygame.Surface((SCALE, SCALE))
 END.fill(RED)
 char_image = pygame.image.load('character.png')
+dots_s = pygame.mixer.Sound('sounds/dots.ogg')
+lines_s = pygame.mixer.Sound('sounds/lines.ogg')
 
 # Позиции и переменные
 start_pos = None
@@ -52,6 +54,7 @@ def starting():
             start_pos = default_start_pos  # Нельзя создать точку на границе поля
         else:
             start_pos = pos
+            dots_s.play()
 
         start_pos_flag = True
 
@@ -72,6 +75,7 @@ def ending():
             end_pos = default_end_pos  # Нельзя создать точку на границе поля или на точке старта
         else:
             end_pos = pos
+            dots_s.play()
 
         end_pos_flag = True
         pygame.display.set_caption('Now, draw the environment!')  # Забавная подсказка в названии окна программы
@@ -102,7 +106,8 @@ def drawing_lines(e, p):
             pods.append(p)  # Соединены все точки на экране
             pygame.draw.circle(screen, GREEN, p, HALF_SCALE)  # Рисование точек
         elif button == 3 and len(pods) >= 2:  # Если точек больше 2 и нажата ПКМ, они
-            pygame.draw.lines(screen, GREEN, False, pods, SCALE * 2)  # Соединяются по очереди
+            pygame.draw.lines(screen, GREEN, False, pods, SCALE)  # Соединяются по очереди
+            lines_s.play()
             pods.clear()  # Очистка массива точек
 
 
@@ -126,7 +131,7 @@ while phase_drawing:
     clock.tick(win_fps)  # 1 цикл длятся 1/60 секунду
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # Если нажать на крестик или использовать
-            sys.exit()  # Сочетание горячих клавиш Alt + F4, то программа закроется
+            sys.exit()  # Сочетание горячих клавиш Alt + F4, то рограмма закроется
         if not start_pos_flag:  # Создание точки старта
             starting()
             pygame.draw.rect(screen, GREEN, (0, 0, SCALE, SCALE))
@@ -169,7 +174,6 @@ for x in range(0, win_width, SCALE):  # Построчный перебор ка
         else:  # Обработка для пустых (серых) точек на экране
             scheme += '.'
     scheme += '\n'  # Добавление строки в массив
-# print(scheme)
 scheme = scheme.split('\n')  # Преобразование получившейся строки в массив строк
 
 # Создание спрайта персонажа
@@ -182,15 +186,12 @@ way = SWM(scheme, s, t)  # Получаем путь от точки старт�
 rect_hero = pygame.Rect(start_pos[0], start_pos[1], SCALE, SCALE)
 win_fps *= 2
 pygame.display.set_caption('Drawing the shortest way...')
-if way[1] == INF:
-    pass
-else:
-    for i in way[0]:
-        pygame.draw.rect(screen, ORANGE, rect_hero, SCALE, SCALE)
-        pygame.display.update(rect_hero)
-        rect_hero.x += i[0] * SCALE
-        rect_hero.y += i[1] * SCALE
-        clock.tick(win_fps)
+for i in way[0]:
+    pygame.draw.rect(screen, ORANGE, rect_hero, SCALE, SCALE)
+    pygame.display.update(rect_hero)
+    rect_hero.x += i[0] * SCALE
+    rect_hero.y += i[1] * SCALE
+    clock.tick(win_fps)
 
 phase_moving = True
 pygame.display.set_caption('The shortest way was drawn! Its length is: ' + str(way[1]))
