@@ -1,5 +1,6 @@
 import pygame
 import sys
+from buttons import Button
 from shortestWaySearcher.BFS import *
 
 # Основные параметры программы:
@@ -17,6 +18,9 @@ if COMPRESSION > 1:
 win_width = 100 * SCALE  # Ширина окна
 win_height = 100 * SCALE  # Высота окна
 win_fps = 60  # Частота кадров в секунду
+set_width = 400
+all_width = win_width + set_width
+allow_x = (0, win_width)
 
 # Цвета
 BLUE = (0, 140, 240, 255)
@@ -27,12 +31,14 @@ ORANGE = (255, 79, 0, 255)
 
 # Создание программы
 pygame.init()
-screen = pygame.display.set_mode((win_width, win_height))
+screen = pygame.display.set_mode((all_width, win_height))
 clock = pygame.time.Clock()
 START = pygame.Surface((SCALE * 2, SCALE * 2))
 START.fill(BLUE)
 END = pygame.Surface((SCALE * 2, SCALE * 2))
 END.fill(RED)
+objects = []
+font = pygame.font.SysFont('Arial', 40)
 char_image = pygame.image.load('character.png')
 dots_s = pygame.mixer.Sound('sounds/dots.ogg')
 lines_s = pygame.mixer.Sound('sounds/lines.ogg')
@@ -135,23 +141,28 @@ screen.fill(GRAY)  # Заполнение экрана серым
 pygame.display.update()  # Заполнение экрана серым
 phase_drawing = True  # Фаза рисования
 pygame.draw.rect(screen, GREEN, (0, 0, win_width, win_height), SCALE)  # Рисование границ
+update_Button = Button(screen, 600, 30, 150, 75, 'update')
+objects.append(update_Button)
 
 while phase_drawing:
-    clock.tick(win_fps)  # 1 цикл длятся 1/60 секунду
+    clock.tick(win_fps) # 1 цикл длятся 1/60 секунду
+    for obj in objects:
+        obj.process()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # Если нажать на крестик или использовать
             sys.exit()  # Сочетание горячих клавиш Alt + F4, то программа закроется
-        if not start_pos_flag:  # Создание точки старта
-            starting()
-            pygame.draw.rect(screen, GREEN, (0, 0, SCALE, SCALE))
-        elif not end_pos_flag:  # Создание конечной точки
-            ending()
-            pygame.draw.rect(screen, GREEN, (0, 0, SCALE, SCALE))
-        elif end_pos_flag:  # Рисование
-            drawing(event)
-        if event.type == pygame.KEYDOWN and end_pos_flag:  # Завершение фазы рисования при
-            if event.key == pygame.K_SPACE:  # Нажатии на пробел и создания конечной точки
-                phase_drawing = False  # И точки старты
+        if allow_x[0] < pygame.mouse.get_pos()[0] < allow_x[1]:
+            if not start_pos_flag:  # Создание точки старта
+                starting()
+                pygame.draw.rect(screen, GREEN, (0, 0, SCALE, SCALE))
+            elif not end_pos_flag:  # Создание конечной точки
+                ending()
+                pygame.draw.rect(screen, GREEN, (0, 0, SCALE, SCALE))
+            elif end_pos_flag:  # Рисование
+                drawing(event)
+            if event.type == pygame.KEYDOWN and end_pos_flag:  # Завершение фазы рисования при
+                if event.key == pygame.K_SPACE:  # Нажатии на пробел и создания конечной точки
+                    phase_drawing = False  # И точки старты
     pygame.draw.rect(screen, GREEN, (0, 0, win_width, win_height), SCALE)  # Обновление границ
     if start_pos is not None:  # Обновление точки старта
         screen.blit(START, (start_pos[0] - SCALE, start_pos[1] - SCALE))
