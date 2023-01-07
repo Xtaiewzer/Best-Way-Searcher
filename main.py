@@ -1,9 +1,6 @@
 import sys
 
-import pygame
-
 from BFS import *
-from buttons import Button
 from consts import *
 
 pygame.init()
@@ -121,13 +118,32 @@ def close(e):
         sys.exit()
 
 
+def test():
+    print('1')
+
+
+def upd_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = font.render('UPDATE', True, BLACK)
+    text_rect = text.get_rect(center=(700, 50))
+    button = button_surf.get_rect(center=(700, 50))
+    button_surf.fill(WHITE)
+    mouse_pos = pygame.mouse.get_pos()
+    if button.collidepoint(mouse_pos):
+        button_surf.fill(GRAY)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            reload()
+    screen.blit(button_surf, button)
+    screen.blit(text, text_rect)
+
+
 def run():
     pygame.display.set_caption('Set start and end points')
     screen.fill(GRAY)
     pygame.display.update()
     phase_drawing = True
-    update_Button = Button(screen, 600, 30, 150, 75, 'update')
-    objects.append(update_Button)
+    #update_Button = Button(screen, 600, 30, 150, 75, 'update')
+    #objects.append(update_Button)
     screen.blit(SETBOARD, (win_width, 0))
 
     while phase_drawing:
@@ -136,6 +152,7 @@ def run():
             obj.process()
         for e in pygame.event.get():
             close(e)
+            upd_button(e)
             if allow_x[0] < pygame.mouse.get_pos()[0] < allow_x[1]:
                 if not start_pos_flag:
                     starting(e)
@@ -179,6 +196,7 @@ def run():
         for i in way[0]:
             for e in pygame.event.get():
                 close(e)
+                upd_button(e)
                 use_reload(e)
             pygame.draw.rect(screen, ORANGE, rect_hero, SCALE, SCALE)
             pygame.display.update(rect_hero)
@@ -192,6 +210,7 @@ def run():
     while phase_moving:
         for e in pygame.event.get():
             close(e)
+            upd_button(e)
             use_reload(e)
 
 run()

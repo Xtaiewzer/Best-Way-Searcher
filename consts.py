@@ -1,5 +1,7 @@
 import pygame
 
+
+pygame.init()
 # Основные параметры программы:
 SCALE = 5  # Масштаб
 HALF_SCALE = SCALE // 2
@@ -27,6 +29,8 @@ GRAY = (70, 70, 70, 255)
 ORANGE = (255, 79, 0, 255)
 DARK_GRAY = (50, 50, 50, 255)
 YELLOW = (255, 186, 0, 255)
+WHITE = (255, 255, 255, 255)
+BLACK = (0, 0, 0, 255)
 
 # Позиции и переменные
 start_pos = None
@@ -42,3 +46,4 @@ objects = []
 char_image = pygame.image.load('character.png')
 dots_s = pygame.mixer.Sound('sounds/dots.ogg')
 lines_s = pygame.mixer.Sound('sounds/lines.ogg')
+font = pygame.font.SysFont('collibri', 36)
