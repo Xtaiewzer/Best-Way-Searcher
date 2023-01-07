@@ -205,3 +205,5 @@ while phase_moving:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if event.type == pygame.KEYDOWN:  # Завершение фазы рисования при
+            reload_drawing()
