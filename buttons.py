@@ -1,11 +1,10 @@
 import pygame
 
-
 pygame.init()
 font = pygame.font.SysFont('collibri', 40)
 
 
-class Button():
+class Button:
     def __init__(self, screen, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False):
         self.screen = screen
         self.x = x
@@ -27,7 +26,6 @@ class Button():
         self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
 
         self.alreadyPressed = False
-
 
     def process(self):
 
