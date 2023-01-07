@@ -1,33 +1,7 @@
-import pygame
-import sys
 from buttons import Button
+import sys
 from shortestWaySearcher.BFS import *
-
-# Основные параметры программы:
-SCALE = 5  # Масштаб
-HALF_SCALE = SCALE // 2
-if HALF_SCALE >= 0:
-    HALF_SCALE = 1
-LINES_SIZE = SCALE
-COMPRESSION = 1
-if COMPRESSION < 1:
-    COMPRESSION = 1
-LINES_SCALE = 1
-if COMPRESSION > 1:
-    LINES_SCALE = COMPRESSION // 2
-win_width = 100 * SCALE  # Ширина окна
-win_height = 100 * SCALE  # Высота окна
-win_fps = 60  # Частота кадров в секунду
-set_width = 400
-all_width = win_width + set_width
-allow_x = (0, win_width)
-
-# Цвета
-BLUE = (0, 140, 240, 255)
-RED = (255, 0, 0, 255)
-GREEN = (0, 255, 0, 255)
-GRAY = (70, 70, 70, 255)
-ORANGE = (255, 79, 0, 255)
+from consts import *
 
 # Создание программы
 pygame.init()
@@ -37,22 +11,6 @@ START = pygame.Surface((SCALE * 2, SCALE * 2))
 START.fill(BLUE)
 END = pygame.Surface((SCALE * 2, SCALE * 2))
 END.fill(RED)
-objects = []
-font = pygame.font.SysFont('Arial', 40)
-char_image = pygame.image.load('character.png')
-dots_s = pygame.mixer.Sound('sounds/dots.ogg')
-lines_s = pygame.mixer.Sound('sounds/lines.ogg')
-
-# Позиции и переменные
-start_pos = None
-start_pos_flag = False
-end_pos = None
-end_pos_flag = False
-moving_flag = False
-default_start_pos = (SCALE * 2, SCALE * 2)
-default_end_pos = (win_width - SCALE * 2, win_height - SCALE * 2)
-dots = []
-lines = True
 
 
 # Функция, создающая точку старта
@@ -67,7 +25,6 @@ def starting():
             start_pos = default_start_pos  # Нельзя создать точку на границе поля
         else:
             start_pos = pos
-
         dots_s.play()
         start_pos_flag = True
 
@@ -88,7 +45,6 @@ def ending():
             end_pos = default_end_pos  # Нельзя создать точку на границе поля или на точке старта
         else:
             end_pos = pos
-
         dots_s.play()
         end_pos_flag = True
         pygame.display.set_caption('Now, draw the environment!')  # Забавная подсказка в названии окна программы
@@ -145,7 +101,7 @@ update_Button = Button(screen, 600, 30, 150, 75, 'update')
 objects.append(update_Button)
 
 while phase_drawing:
-    clock.tick(win_fps) # 1 цикл длятся 1/60 секунду
+    clock.tick(win_fps)  # 1 цикл длятся 1/60 секунду
     for obj in objects:
         obj.process()
     for event in pygame.event.get():
@@ -164,8 +120,9 @@ while phase_drawing:
                 if event.key == pygame.K_SPACE:  # Нажатии на пробел и создания конечной точки
                     phase_drawing = False  # И точки старты
     pygame.draw.rect(screen, GREEN, (0, 0, win_width, win_height), SCALE)  # Обновление границ
-    if start_pos is not None:  # Обновление точки старта
+    if start_pos is not None:  # Обновление конечной точки
         screen.blit(START, (start_pos[0] - SCALE, start_pos[1] - SCALE))
+    pygame.display.update()  # Обновление границ экрана
     if end_pos is not None:  # Обновление конечной точки
         screen.blit(END, (end_pos[0] - SCALE, end_pos[1] - SCALE))
     pygame.display.update()  # Обновление границ экрана

@@ -2,7 +2,7 @@ import pygame
 
 
 pygame.init()
-font = pygame.font.SysFont('Arial', 40)
+font = pygame.font.SysFont('collibri', 40)
 
 
 class Button():

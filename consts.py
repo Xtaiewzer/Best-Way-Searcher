@@ -1,0 +1,42 @@
+import pygame
+
+# Основные параметры программы:
+SCALE = 5  # Масштаб
+HALF_SCALE = SCALE // 2
+if HALF_SCALE >= 0:
+    HALF_SCALE = 1
+LINES_SIZE = SCALE
+COMPRESSION = 1
+if COMPRESSION < 1:
+    COMPRESSION = 1
+LINES_SCALE = 1
+if COMPRESSION > 1:
+    LINES_SCALE = COMPRESSION // 2
+win_width = 100 * SCALE  # Ширина окна
+win_height = 100 * SCALE  # Высота окна
+win_fps = 60  # Частота кадров в секунду
+set_width = 400
+all_width = win_width + set_width
+allow_x = (0, win_width)
+
+# Цвета
+BLUE = (0, 140, 240, 255)
+RED = (255, 0, 0, 255)
+GREEN = (0, 255, 0, 255)
+GRAY = (70, 70, 70, 255)
+ORANGE = (255, 79, 0, 255)
+
+# Позиции и переменные
+start_pos = None
+start_pos_flag = False
+end_pos = None
+end_pos_flag = False
+moving_flag = False
+default_start_pos = (SCALE * 2, SCALE * 2)
+default_end_pos = (win_width - SCALE * 2, win_height - SCALE * 2)
+dots = []
+lines = True
+objects = []
+char_image = pygame.image.load('character.png')
+dots_s = pygame.mixer.Sound('sounds/dots.ogg')
+lines_s = pygame.mixer.Sound('sounds/lines.ogg')
