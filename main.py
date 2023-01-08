@@ -1,5 +1,4 @@
 import sys
-
 from BFS import *
 from consts import *
 
@@ -38,10 +37,10 @@ def ending(event):
         pos = event.pos
         color = screen.get_at(pos)
 
-        if screen.get_at(default_end_pos) == BLUE:
+        if screen.get_at(default_end_pos) == GREEN:
             default_end_pos = default_start_pos
 
-        if color == YELLOW or color == BLUE:
+        if color == YELLOW or color == GREEN:
             end_pos = default_end_pos
         else:
             end_pos = pos
@@ -63,9 +62,10 @@ def drawing(e):
     else:
         if pressed[0]:
             pygame.draw.circle(screen, GRAY, pos, SCALE * 2)
-            if delay % 30 == 0:
+            if delay % 20 == 0:
                 eraser_s.play()
                 delay = 0
+
 
 
 def drawing_lines(e, p):
@@ -74,17 +74,28 @@ def drawing_lines(e, p):
         if button == 1:
             dots.append(p)
             pygame.draw.circle(screen, YELLOW, p, HALF_SCALE)
-            dots_s.play()
+            dotsl_s.play()
         elif button == 3 and len(dots) >= 2:
-            pygame.draw.lines(screen, YELLOW, False, dots, SCALE * LINES_SCALE)
-            dots.clear()
+            link_dots()
             lines_s.play()
 
+def link_dots():
+    pygame.draw.lines(screen, YELLOW, False, dots, SCALE * LINES_SCALE)
+    dots.clear()
+
+def funcs():
+    for e in pygame.event.get():
+        close(e)
+        upd_button(e)
+        use_reload(e)
+        pygame.display.update()
 
 def reload():
     global start_pos_flag, start_pos, end_pos, end_pos_flag, \
         default_end_pos, default_start_pos, dots, lines, objects
 
+    draw_s.stop()
+    update_s.play()
     start_pos = None
     start_pos_flag = False
     end_pos = None
@@ -176,6 +187,7 @@ def run():
     pygame.display.update()
     for x in range(0, win_width, COMPRESSION):
         for y in range(0, win_height, COMPRESSION):
+            funcs()
             pix = screen.get_at((x, y))
             if pix == YELLOW:
                 scheme += '#'
@@ -190,8 +202,7 @@ def run():
     screen_text('Drawing the shortest way...', 700, 300)
     pygame.display.update()
     if way[1] < INF:
-        rect_hero.x -= HALF_SCALE
-        rect_hero.y -= HALF_SCALE
+        draw_s.play()
         for i in way[0]:
             for e in pygame.event.get():
                 close(e)
@@ -206,17 +217,13 @@ def run():
         screen_text('Its length is: ' + str(way[1] * COMPRESSION), 700, 350)
         success_s.play()
         pygame.display.update()
+        draw_s.stop()
     else:
         screen_text('Sorry,', 700, 300)
         screen_text('there is no shortest way :(', 700, 350)
         error_s.play()
-    phase_moving = True
-    while phase_moving:
-        for e in pygame.event.get():
-            close(e)
-            upd_button(e)
-            use_reload(e)
-            pygame.display.update()
+    while 1:
+        funcs()
 
 
 run()
