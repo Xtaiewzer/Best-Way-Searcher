@@ -1,9 +1,11 @@
 import sys
+import pygame.event
 from BFS import *
 from consts import *
 
 pygame.init()
 screen = pygame.display.set_mode((all_width, win_height))
+pygame.display.set_caption('Shortest way searcher')
 clock = pygame.time.Clock()
 START = pygame.Surface((SCALE * 2, SCALE * 2))
 START.fill(GREEN)
@@ -12,6 +14,8 @@ END.fill(RED)
 SETBOARD = pygame.Surface((set_width, win_height))
 SETBOARD.fill(DARK_GRAY)
 pygame.display.set_icon(icon_image)
+blank = pygame.surface.Surface((350, 175))
+blank.fill(GRAY)
 
 
 def starting(event):
@@ -50,22 +54,29 @@ def ending(event):
 
 
 def drawing(e):
-    global lines, delay
+    global mode, delay
     pressed = pygame.mouse.get_pressed()
     pos = pygame.mouse.get_pos()
     if e.type == pygame.KEYDOWN and (e.mod & pygame.KMOD_CTRL) \
             and not len(dots):
-        lines = not lines
+        change_mode()
 
-    if lines:
+    if mode == LINES:
         drawing_lines(e, pos)
     else:
         if pressed[0]:
-            pygame.draw.circle(screen, GRAY, pos, SCALE * 2)
+            pygame.draw.circle(screen, LIGHT_GRAY, pos, SCALE * 2)
             if delay % 20 == 0:
                 eraser_s.play()
                 delay = 0
 
+
+def change_mode():
+    global mode
+    if mode == LINES:
+        mode = ERASER
+    else:
+        mode = LINES
 
 
 def drawing_lines(e, p):
@@ -75,35 +86,40 @@ def drawing_lines(e, p):
             dots.append(p)
             pygame.draw.circle(screen, YELLOW, p, HALF_SCALE)
             dotsl_s.play()
-        elif button == 3 and len(dots) >= 2:
+        elif button == 3:
             link_dots()
-            lines_s.play()
+
 
 def link_dots():
-    pygame.draw.lines(screen, YELLOW, False, dots, SCALE * LINES_SCALE)
-    dots.clear()
+    if len(dots) >= 2:
+        pygame.draw.lines(screen, YELLOW, False, dots, SCALE * LINES_SCALE)
+        dots.clear()
+        lines_s.play()
+
 
 def funcs():
     for e in pygame.event.get():
-        close(e)
-        upd_button(e)
+        buttons(e)
         use_reload(e)
         pygame.display.update()
 
+
 def reload():
     global start_pos_flag, start_pos, end_pos, end_pos_flag, \
-        default_end_pos, default_start_pos, dots, lines, objects
+        default_end_pos, default_start_pos, dots, mode, objects, \
+        phase_drawing
 
     draw_s.stop()
     update_s.play()
     start_pos = None
+    phase_drawing = True
     start_pos_flag = False
     end_pos = None
     end_pos_flag = False
     default_start_pos = (SCALE * 2, SCALE * 2)
     default_end_pos = (win_width - SCALE * 2, win_height - SCALE * 2)
     dots = []
-    lines = True
+    mode = LINES
     objects = []
     run()
 
@@ -119,46 +135,134 @@ def close(e):
 
 
 def upd_button(event):
-    button_surf = pygame.Surface((150, 55))
+    button_surf = pygame.Surface((300, 55))
     text = font.render('UPDATE', True, BLACK)
-    text_rect = text.get_rect(center=(700, 50))
-    button = button_surf.get_rect(center=(700, 50))
+    center = (700, 250)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
     mouse_pos = pygame.mouse.get_pos()
     if button.collidepoint(mouse_pos):
-        button_surf.fill(GRAY)
+        button_surf.fill(LIGHT_GRAY)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            update_s.play()
             reload()
+            button_s.play()
+    screen.blit(button_surf, button)
+    screen.blit(text, text_rect)
+
+
+def random_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = font.render('RANDOM', True, BLACK)
+    center = (800, 50)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    if phase_drawing and end_pos_flag:
+        button_surf.fill(WHITE)
+        mouse_pos = pygame.mouse.get_pos()
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                button_s.play()
+    else:
+        button_surf.fill(LIGHT_GRAY)
+    screen.blit(button_surf, button)
+    screen.blit(text, text_rect)
+
+
+def draw_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = font.render('DRAW', True, BLACK)
+    center = (600, 150)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    if phase_drawing and end_pos_flag:
+        button_surf.fill(WHITE)
+        mouse_pos = pygame.mouse.get_pos()
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                link_dots()
+    else:
+        button_surf.fill(LIGHT_GRAY)
+    screen.blit(button_surf, button)
+    screen.blit(text, text_rect)
+
+
+def test_button(event):
+    global phase_drawing
+    button_surf = pygame.Surface((150, 55))
+    text = font.render('TEST', True, BLACK)
+    center = (600, 50)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    if phase_drawing and end_pos_flag:
+        button_surf.fill(WHITE)
+        mouse_pos = pygame.mouse.get_pos()
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                phase_drawing = False
+                button_s.play()
+    else:
+        button_surf.fill(LIGHT_GRAY)
+    screen.blit(button_surf, button)
+    screen.blit(text, text_rect)
+
+
+def mode_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = font.render(mode, True, BLACK)
+    center = (800, 150)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    if phase_drawing and end_pos_flag:
+        button_surf.fill(WHITE)
+        mouse_pos = pygame.mouse.get_pos()
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                change_mode()
+                button_s.play()
+    else:
+        button_surf.fill(LIGHT_GRAY)
     screen.blit(button_surf, button)
     screen.blit(text, text_rect)
 
 
 def screen_text(text, c_x, c_y):
-    r_surf = pygame.Surface((400, 30))
-    r = r_surf.get_rect(center=(c_x, c_y))
-    r_surf.fill(DARK_GRAY)
     scr_text = font.render(text, True, WHITE)
     scr_text_rect = scr_text.get_rect(center=(c_x, c_y))
-    screen.blit(r_surf, r)
     screen.blit(scr_text, scr_text_rect)
+
+def put_blank():
+    screen.blit(blank, (525, 300))
+    pygame.draw.line(screen, YELLOW, (525, 300), (875, 300), 5)
+    pygame.draw.line(screen, YELLOW, (525, 475), (875, 475), 5)
+
+
+def buttons(e):
+    close(e)
+    upd_button(e)
+    random_button(e)
+    draw_button(e)
+    test_button(e)
+    mode_button(e)
 
 
 def run():
-    global delay
-    pygame.display.set_caption('Shortest way searcher')
-    screen.fill(GRAY)
+    global delay, phase_drawing
+    screen.fill(LIGHT_GRAY)
     pygame.display.update()
-    phase_drawing = True
     screen.blit(SETBOARD, (win_width, 0))
-    screen_text('Set start position', 700, 300)
+    put_blank()
+    screen_text('Set start position', text_x, text_y)
 
     while phase_drawing:
         clock.tick(win_fps)
         delay += 1
         for e in pygame.event.get():
-            close(e)
-            upd_button(e)
+            buttons(e)
             if allow_x[0] < pygame.mouse.get_pos()[0] < allow_x[1]:
                 if not start_pos_flag:
                     starting(e)
@@ -166,9 +270,11 @@ def run():
                 elif not end_pos_flag:
                     ending(e)
                     pygame.draw.rect(screen, YELLOW, (0, 0, SCALE, SCALE))
-                    screen_text('Set finish position', 700, 300)
+                    put_blank()
+                    screen_text('Set finish position', text_x, text_y)
                 elif end_pos_flag:
-                    screen_text('Now, draw the environment', 700, 300)
+                    put_blank()
+                    screen_text('Now, draw the environment', text_x, text_y)
                     drawing(e)
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_SPACE and end_pos_flag:
@@ -183,7 +289,8 @@ def run():
         pygame.display.update()
 
     scheme = ''
-    screen_text('Searching the shortest way...', 700, 300)
+    put_blank()
+    screen_text('Searching the shortest way...', text_x, text_y)
     pygame.display.update()
     for x in range(0, win_width, COMPRESSION):
         for y in range(0, win_height, COMPRESSION):
@@ -199,29 +306,31 @@ def run():
               (end_pos[0] // COMPRESSION,
                end_pos[1] // COMPRESSION))
     rect_hero = pygame.Rect(start_pos[0], start_pos[1], SCALE, SCALE)
-    screen_text('Drawing the shortest way...', 700, 300)
     pygame.display.update()
     if way[1] < INF:
+        put_blank()
+        screen_text('Drawing the shortest way...', text_x, text_y)
         draw_s.play()
         for i in way[0]:
-            for e in pygame.event.get():
-                close(e)
-                upd_button(e)
-                use_reload(e)
+            funcs()
             pygame.draw.rect(screen, ORANGE, rect_hero, SCALE, SCALE)
             pygame.display.update(rect_hero)
             rect_hero.x += i[0] * COMPRESSION
             rect_hero.y += i[1] * COMPRESSION
             pygame.time.wait(SCALE)
-        screen_text('The shortest way has drawn!', 700, 300)
-        screen_text('Its length is: ' + str(way[1] * COMPRESSION), 700, 350)
+        put_blank()
+        screen_text('The shortest way has drawn!', text_x, text_y - 20)
+        screen_text('Its length is: ' + str(way[1] * COMPRESSION), text_x, text_y + 30)
+        draw_s.stop()
+        pygame.time.wait(200)
         success_s.play()
         pygame.display.update()
-        draw_s.stop()
     else:
-        screen_text('Sorry,', 700, 300)
-        screen_text('there is no shortest way :(', 700, 350)
+        put_blank()
+        screen_text('Sorry,', text_x, text_y - 20)
+        screen_text('there is no shortest way :(', text_x, text_y + 30)
         error_s.play()
+        pygame.display.update()
     while 1:
         funcs()
 
