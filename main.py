@@ -86,15 +86,14 @@ def drawing_lines(e, p):
             dots.append(p)
             pygame.draw.circle(screen, YELLOW, p, HALF_SCALE)
             dotsl_s.play()
-        elif button == 3:
+        elif button == 3 and len(dots) >= 2:
             link_dots()
 
 
 def link_dots():
-    if len(dots) >= 2:
-        pygame.draw.lines(screen, YELLOW, False, dots, SCALE * LINES_SCALE)
-        dots.clear()
-        lines_s.play()
+    pygame.draw.lines(screen, YELLOW, False, dots, SCALE * LINES_SCALE)
+    dots.clear()
+    lines_s.play()
 
 
 def funcs():
@@ -176,7 +175,8 @@ def draw_button(event):
     center = (600, 150)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag:
+    if phase_drawing and end_pos_flag and len(dots) > 1\
+            and mode == LINES:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
         if button.collidepoint(mouse_pos):
@@ -327,8 +327,8 @@ def run():
         pygame.display.update()
     else:
         put_blank()
-        screen_text('Sorry,', text_x, text_y - 20)
-        screen_text('there is no shortest way :(', text_x, text_y + 30)
+        screen_text('Sorry,', text_x, text_y - 25)
+        screen_text('there is no shortest way :(', text_x, text_y + 25)
         error_s.play()
         pygame.display.update()
     while 1:
