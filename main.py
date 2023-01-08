@@ -12,10 +12,9 @@ END = pygame.Surface((SCALE * 2, SCALE * 2))
 END.fill(RED)
 SETBOARD = pygame.Surface((set_width, win_height))
 SETBOARD.fill(DARK_GRAY)
-objects = []
-char_image = pygame.image.load('character.png')
 dots_s = pygame.mixer.Sound('sounds/dots.ogg')
 lines_s = pygame.mixer.Sound('sounds/lines.ogg')
+pygame.display.set_icon(icon_image)
 
 
 def starting(event):
@@ -84,14 +83,6 @@ def drawing_lines(e, p):
             lines_s.play()
 
 
-class Character(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = char_image
-        self.rect = self.image.get_rect()
-        self.rect.center = (start_pos[0], start_pos[1])
-
-
 def reload():
     global start_pos_flag, start_pos, end_pos, end_pos_flag, \
         default_end_pos, default_start_pos, dots, lines, objects
@@ -118,10 +109,6 @@ def close(e):
         sys.exit()
 
 
-def test():
-    print('1')
-
-
 def upd_button(event):
     button_surf = pygame.Surface((150, 55))
     text = font.render('UPDATE', True, BLACK)
@@ -142,14 +129,10 @@ def run():
     screen.fill(GRAY)
     pygame.display.update()
     phase_drawing = True
-    #update_Button = Button(screen, 600, 30, 150, 75, 'update')
-    #objects.append(update_Button)
     screen.blit(SETBOARD, (win_width, 0))
 
     while phase_drawing:
         clock.tick(win_fps)
-        for obj in objects:
-            obj.process()
         for e in pygame.event.get():
             close(e)
             upd_button(e)
@@ -212,5 +195,6 @@ def run():
             close(e)
             upd_button(e)
             use_reload(e)
+
 
 run()
