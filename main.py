@@ -12,8 +12,6 @@ END = pygame.Surface((SCALE * 2, SCALE * 2))
 END.fill(RED)
 SETBOARD = pygame.Surface((set_width, win_height))
 SETBOARD.fill(DARK_GRAY)
-dots_s = pygame.mixer.Sound('sounds/dots.ogg')
-lines_s = pygame.mixer.Sound('sounds/lines.ogg')
 pygame.display.set_icon(icon_image)
 
 
@@ -50,15 +48,12 @@ def ending(event):
 
         dots_s.play()
         end_pos_flag = True
-        pygame.display.set_caption('Now, draw the environment!')
 
 
 def drawing(e):
-    global lines
-
+    global lines, delay
     pressed = pygame.mouse.get_pressed()
     pos = pygame.mouse.get_pos()
-
     if e.type == pygame.KEYDOWN and (e.mod & pygame.KMOD_CTRL) \
             and not len(dots):
         lines = not lines
@@ -68,6 +63,9 @@ def drawing(e):
     else:
         if pressed[0]:
             pygame.draw.circle(screen, GRAY, pos, SCALE * 2)
+            if delay % 30 == 0:
+                eraser_s.play()
+                delay = 0
 
 
 def drawing_lines(e, p):
@@ -119,20 +117,34 @@ def upd_button(event):
     if button.collidepoint(mouse_pos):
         button_surf.fill(GRAY)
         if event.type == pygame.MOUSEBUTTONDOWN:
+            update_s.play()
             reload()
     screen.blit(button_surf, button)
     screen.blit(text, text_rect)
 
 
+def screen_text(text, c_x, c_y):
+    r_surf = pygame.Surface((400, 30))
+    r = r_surf.get_rect(center=(c_x, c_y))
+    r_surf.fill(DARK_GRAY)
+    scr_text = font.render(text, True, WHITE)
+    scr_text_rect = scr_text.get_rect(center=(c_x, c_y))
+    screen.blit(r_surf, r)
+    screen.blit(scr_text, scr_text_rect)
+
+
 def run():
-    pygame.display.set_caption('Set start and end points')
+    global delay
+    pygame.display.set_caption('Shortest way searcher')
     screen.fill(GRAY)
     pygame.display.update()
     phase_drawing = True
     screen.blit(SETBOARD, (win_width, 0))
+    screen_text('Set start position', 700, 300)
 
     while phase_drawing:
         clock.tick(win_fps)
+        delay += 1
         for e in pygame.event.get():
             close(e)
             upd_button(e)
@@ -143,7 +155,9 @@ def run():
                 elif not end_pos_flag:
                     ending(e)
                     pygame.draw.rect(screen, YELLOW, (0, 0, SCALE, SCALE))
+                    screen_text('Set finish position', 700, 300)
                 elif end_pos_flag:
+                    screen_text('Now, draw the environment', 700, 300)
                     drawing(e)
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_SPACE and end_pos_flag:
@@ -158,7 +172,8 @@ def run():
         pygame.display.update()
 
     scheme = ''
-    pygame.display.set_caption('Searching the shortest way...')
+    screen_text('Searching the shortest way...', 700, 300)
+    pygame.display.update()
     for x in range(0, win_width, COMPRESSION):
         for y in range(0, win_height, COMPRESSION):
             pix = screen.get_at((x, y))
@@ -172,8 +187,9 @@ def run():
               (end_pos[0] // COMPRESSION,
                end_pos[1] // COMPRESSION))
     rect_hero = pygame.Rect(start_pos[0], start_pos[1], SCALE, SCALE)
+    screen_text('Drawing the shortest way...', 700, 300)
+    pygame.display.update()
     if way[1] < INF:
-        pygame.display.set_caption('Drawing the shortest way...')
         rect_hero.x -= HALF_SCALE
         rect_hero.y -= HALF_SCALE
         for i in way[0]:
@@ -186,15 +202,21 @@ def run():
             rect_hero.x += i[0] * COMPRESSION
             rect_hero.y += i[1] * COMPRESSION
             pygame.time.wait(SCALE)
-        pygame.display.set_caption('The shortest way fas drawn! Its length is: ' + str(way[1] * COMPRESSION))
+        screen_text('The shortest way has drawn!', 700, 300)
+        screen_text('Its length is: ' + str(way[1] * COMPRESSION), 700, 350)
+        success_s.play()
+        pygame.display.update()
     else:
-        pygame.display.set_caption('I am sorry, but I cannot find the shortest way :(')
+        screen_text('Sorry,', 700, 300)
+        screen_text('there is no shortest way :(', 700, 350)
+        error_s.play()
     phase_moving = True
     while phase_moving:
         for e in pygame.event.get():
             close(e)
             upd_button(e)
             use_reload(e)
+            pygame.display.update()
 
 
 run()

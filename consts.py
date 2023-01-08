@@ -20,6 +20,7 @@ win_fps = 60  # Частота кадров в секунду
 set_width = 400
 all_width = win_width + set_width
 allow_x = (0, win_width)
+delay = 10
 
 # Цвета
 BLUE = (0, 140, 240, 255)
@@ -44,6 +45,10 @@ dots = []
 lines = True
 objects = []
 icon_image = pygame.image.load('character.png')
-dots_s = pygame.mixer.Sound('sounds/dots.ogg')
+dots_s = pygame.mixer.Sound('sounds/dots (2).ogg')
 lines_s = pygame.mixer.Sound('sounds/lines.ogg')
+eraser_s = pygame.mixer.Sound('sounds/eraser.ogg')
+success_s = pygame.mixer.Sound('sounds/success.ogg')
+error_s = pygame.mixer.Sound('sounds/error.ogg')
+update_s = pygame.mixer.Sound('sounds/update.ogg')
 font = pygame.font.SysFont('collibri', 36)
