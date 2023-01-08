@@ -57,16 +57,17 @@ def drawing(e):
     global mode, delay
     pressed = pygame.mouse.get_pressed()
     pos = pygame.mouse.get_pos()
-    if e.type == pygame.KEYDOWN and (e.mod & pygame.KMOD_CTRL) \
-            and not len(dots):
-        change_mode()
+    # if e.type == pygame.KEYDOWN and (e.mod & pygame.KMOD_CTRL) \
+    #         and not len(dots):
+    #     change_mode()
 
     if mode == LINES:
         drawing_lines(e, pos)
     else:
         if pressed[0]:
             pygame.draw.circle(screen, LIGHT_GRAY, pos, SCALE * 2)
-            if delay % 20 == 0:
+            delay += 1
+            if delay % 10 == 0:
                 eraser_s.play()
                 delay = 0
 
@@ -86,8 +87,8 @@ def drawing_lines(e, p):
             dots.append(p)
             pygame.draw.circle(screen, YELLOW, p, HALF_SCALE)
             dotsl_s.play()
-        elif button == 3 and len(dots) >= 2:
-            link_dots()
+        # elif button == 3 and len(dots) >= 2:
+        #     link_dots()
 
 
 def link_dots():
@@ -99,7 +100,7 @@ def link_dots():
 def funcs():
     for e in pygame.event.get():
         buttons(e)
-        use_reload(e)
+        # use_reload(e)
         pygame.display.update()
 
 
@@ -123,9 +124,9 @@ def reload():
     run()
 
 
-def use_reload(e):
-    if e.type == pygame.KEYDOWN and e.key == pygame.K_1:
-        reload()
+# def use_reload(e):
+#     if e.type == pygame.KEYDOWN and e.key == pygame.K_1:
+#         reload()
 
 
 def close(e):
@@ -251,7 +252,7 @@ def buttons(e):
 
 
 def run():
-    global delay, phase_drawing
+    global phase_drawing
     screen.fill(LIGHT_GRAY)
     pygame.display.update()
     screen.blit(SETBOARD, (win_width, 0))
@@ -260,7 +261,7 @@ def run():
 
     while phase_drawing:
         clock.tick(win_fps)
-        delay += 1
+        # delay += 1
         for e in pygame.event.get():
             buttons(e)
             if allow_x[0] < pygame.mouse.get_pos()[0] < allow_x[1]:
@@ -276,11 +277,11 @@ def run():
                     put_blank()
                     screen_text('Now, draw the environment', text_x, text_y)
                     drawing(e)
-                if e.type == pygame.KEYDOWN:
-                    if e.key == pygame.K_SPACE and end_pos_flag:
-                        phase_drawing = False
-                    elif e.key == pygame.K_1:
-                        reload()
+                # if e.type == pygame.KEYDOWN:
+                #     if e.key == pygame.K_SPACE and end_pos_flag:
+                #         phase_drawing = False
+                #     elif e.key == pygame.K_1:
+                #         reload()
         pygame.draw.rect(screen, YELLOW, (0, 0, win_width, win_height), SCALE)
         if start_pos is not None:
             screen.blit(START, (start_pos[0] - SCALE, start_pos[1] - SCALE))
@@ -322,7 +323,7 @@ def run():
         screen_text('The shortest way has drawn!', text_x, text_y - 20)
         screen_text('Its length is: ' + str(way[1] * COMPRESSION), text_x, text_y + 30)
         draw_s.stop()
-        pygame.time.wait(200)
+        # pygame.time.wait(200)
         success_s.play()
         pygame.display.update()
     else:
