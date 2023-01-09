@@ -311,6 +311,7 @@ def run():
     if way[1] < INF:
         put_blank()
         screen_text('Drawing the shortest way...', text_x, text_y)
+        pygame.display.update()
         draw_s.play()
         for i in way[0]:
             funcs()
