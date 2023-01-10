@@ -1,4 +1,5 @@
 import sys
+import random
 import pygame.event
 from BFS import *
 from consts import *
@@ -151,19 +152,51 @@ def upd_button(event):
     screen.blit(text, text_rect)
 
 
+def randomizer_pos():
+    global start_pos, start_pos_flag, end_pos, end_pos_flag
+    start_pos = (random.randint(10, win_width - 10), random.randint(10, win_height - 10))
+    end_pos = (random.randint(10, win_width - 10), random.randint(10, win_height - 10))
+    start_pos_flag = True
+    end_pos_flag = True
+
+
+def randomizer_dots():
+    global dots
+    for i in range(2, 4):
+        for j in range(i):
+            randx = random.randint(0, win_width - 5)
+            randy = random.randint(0, win_height - 5)
+            dots.append((randx, randy))
+        link_dots()
+    for i in range(2, 8):
+        for j in range(i):
+            randx = random.randint(0, win_width - 5)
+            randy = random.randint(0, win_height - 5)
+            randrange = random.randint(1, i)
+            pygame.draw.circle(screen, YELLOW, (randx, randy), randrange)
+
+
 def random_button(event):
     button_surf = pygame.Surface((150, 55))
     text = font.render('RANDOM', True, BLACK)
     center = (800, 50)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag:
+    if phase_drawing and end_pos_flag and not len(dots):
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
         if button.collidepoint(mouse_pos):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                button_s.play()
+                randomizer_dots()
+    elif not start_pos_flag and not len(dots):
+        button_surf.fill(WHITE)
+        mouse_pos = pygame.mouse.get_pos()
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                dots_s.play()
+                randomizer_pos()
     else:
         button_surf.fill(LIGHT_GRAY)
     screen.blit(button_surf, button)
@@ -176,7 +209,7 @@ def draw_button(event):
     center = (600, 150)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag and len(dots) > 1\
+    if phase_drawing and end_pos_flag and len(dots) > 1 \
             and mode == LINES:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
@@ -235,6 +268,7 @@ def screen_text(text, c_x, c_y):
     scr_text = font.render(text, True, WHITE)
     scr_text_rect = scr_text.get_rect(center=(c_x, c_y))
     screen.blit(scr_text, scr_text_rect)
+
 
 def put_blank():
     screen.blit(blank, (525, 300))
