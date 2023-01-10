@@ -230,7 +230,7 @@ def test_button(event):
     center = (600, 50)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag:
+    if phase_drawing and end_pos_flag and not len(dots):
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
         if button.collidepoint(mouse_pos):
