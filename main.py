@@ -1,7 +1,7 @@
 import sys
 import random
 import pygame.event
-from BFS import *
+from AStar import *
 from consts import *
 
 pygame.init()
@@ -101,7 +101,6 @@ def link_dots():
 def funcs():
     for e in pygame.event.get():
         buttons(e)
-        # use_reload(e)
         pygame.display.update()
 
 
@@ -110,7 +109,7 @@ def reload():
         default_end_pos, default_start_pos, dots, mode, objects, \
         phase_drawing
 
-    draw_s.stop()
+    pygame.mixer.music.stop()
     update_s.play()
     start_pos = None
     phase_drawing = True
@@ -295,7 +294,6 @@ def run():
 
     while phase_drawing:
         clock.tick(win_fps)
-        # delay += 1
         for e in pygame.event.get():
             buttons(e)
             if allow_x[0] < pygame.mouse.get_pos()[0] < allow_x[1]:
@@ -337,8 +335,8 @@ def run():
                 scheme += '.'
         scheme += '\n'
     scheme = scheme.split('\n')
-    way = SWM(scheme, (start_pos[0] // COMPRESSION, start_pos[1] // COMPRESSION),
-              (end_pos[0] // COMPRESSION,
+    way = AStar(scheme, (start_pos[0] // COMPRESSION, start_pos[1] // COMPRESSION),
+                (end_pos[0] // COMPRESSION,
                end_pos[1] // COMPRESSION))
     rect_hero = pygame.Rect(start_pos[0], start_pos[1], SCALE, SCALE)
     pygame.display.update()
@@ -346,7 +344,7 @@ def run():
         put_blank()
         screen_text('Drawing the shortest way...', text_x, text_y)
         pygame.display.update()
-        draw_s.play()
+        pygame.mixer.music.play(-1)
         for i in way[0]:
             funcs()
             pygame.draw.rect(screen, ORANGE, rect_hero, SCALE, SCALE)
@@ -357,8 +355,7 @@ def run():
         put_blank()
         screen_text('The shortest way has drawn!', text_x, text_y - 20)
         screen_text('Its length is: ' + str(way[1] * COMPRESSION), text_x, text_y + 30)
-        draw_s.stop()
-        # pygame.time.wait(200)
+        pygame.mixer.music.stop()
         success_s.play()
         pygame.display.update()
     else:

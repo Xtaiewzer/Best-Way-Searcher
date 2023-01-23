@@ -3,7 +3,7 @@ from collections import deque
 INF = 10 ** 9
 
 
-def SWM(field, s, t):
+def AStar(field, s, t):
     w = len(field)
     h = len(field[0])
     delta = ((0, -1), (0, 1), (1, 0), (-1, 0),

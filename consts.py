@@ -49,14 +49,14 @@ dots = []
 mode = LINES
 phase_drawing = True
 objects = []
-icon_image = pygame.image.load('character.png')
-dots_s = pygame.mixer.Sound('sounds/dots (2).ogg')
+icon_image = pygame.image.load('sounds/character.png')
+dots_s = pygame.mixer.Sound('sounds/dots.ogg')
 dotsl_s = pygame.mixer.Sound('sounds/dots.mp3')
 lines_s = pygame.mixer.Sound('sounds/line.mp3')
 eraser_s = pygame.mixer.Sound('sounds/eraser.ogg')
 success_s = pygame.mixer.Sound('sounds/success.ogg')
 error_s = pygame.mixer.Sound('sounds/sharp.mp3')
 update_s = pygame.mixer.Sound('sounds/update.ogg')
-draw_s = pygame.mixer.Sound('sounds/draw.mp3')
 button_s = pygame.mixer.Sound('sounds/button.ogg')
+pygame.mixer.music.load('sounds/draw.mp3')
 font = pygame.font.SysFont('collibri', 36)
