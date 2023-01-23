@@ -337,7 +337,7 @@ def run():
     scheme = scheme.split('\n')
     way = AStar(scheme, (start_pos[0] // COMPRESSION, start_pos[1] // COMPRESSION),
                 (end_pos[0] // COMPRESSION,
-               end_pos[1] // COMPRESSION))
+                 end_pos[1] // COMPRESSION))
     rect_hero = pygame.Rect(start_pos[0], start_pos[1], SCALE, SCALE)
     pygame.display.update()
     if way[1] < INF:
