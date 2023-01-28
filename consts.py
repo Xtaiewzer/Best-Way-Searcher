@@ -57,7 +57,7 @@ objects = []
 
 # Инициализация проекта
 SCREEN = pygame.display.set_mode((ALL_WIDTH, HEIGHT))
-pygame.display.set_caption('Shortest way searcher')
+pygame.display.set_caption('Best way searcher')
 pygame.display.set_icon(ICON_IMAGE)
 SETTINGS = pygame.Surface((SETTINGS_WIDTH, HEIGHT))
 SETTINGS.fill(DARK_GRAY)
