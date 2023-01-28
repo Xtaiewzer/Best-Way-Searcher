@@ -359,15 +359,15 @@ def run():
             rect_hero.y += i[1] * COMPRESSION
             pygame.time.wait(SCALE)
         put_blank()
-        screen_text('The shortest way was drawn!', TEXT_X, TEXT_Y - 20)
-        screen_text('Its length is: ' + str(length * COMPRESSION), TEXT_X, TEXT_Y + 30)
+        screen_text('The shortest way is drawn', TEXT_X, TEXT_Y - 20)
+        screen_text('Its length is ' + str(length * COMPRESSION) + ' pixels', TEXT_X, TEXT_Y + 30)
         pygame.mixer.music.stop()
         SUCCESS_S.play()
         pygame.display.update()
     else:  # Алгоритм не смог вычислить кратчайший путь
         put_blank()
         screen_text('Sorry,', TEXT_X, TEXT_Y - 25)
-        screen_text('there is no shortest way', TEXT_X, TEXT_Y + 25)
+        screen_text('but the algorithm could not find the shortest way', TEXT_X, TEXT_Y + 25)
         ERROR_S.play()
         pygame.display.update()
 
