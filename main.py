@@ -378,5 +378,5 @@ def run():
 
 
 # Запуск программы
-def __main__():
+if __name__ == "__main__":
     run()
