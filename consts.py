@@ -1,27 +1,19 @@
 import pygame
 
-# Основные параметры программы:
-pygame.init()
-SCALE = 5  # Масштаб
+pygame.init()  # Инициализация проекта
+
+# Константы, используемые в программе:
+SCALE = 5  # Коэффициент масштаба окна
 HALF_SCALE = SCALE // 2
-if HALF_SCALE >= 0:
-    HALF_SCALE = 1
-LINES_SIZE = SCALE
-COMPRESSION = 1
-if COMPRESSION < 1:
-    COMPRESSION = 1
-LINES_SCALE = 1
-if COMPRESSION > 1:
-    LINES_SCALE = COMPRESSION // 2
-win_width = 100 * SCALE  # Ширина окна
-win_height = 100 * SCALE  # Высота окна
-win_fps = 60  # Частота кадров в секунду
-set_width = 400
-all_width = win_width + set_width
-allow_x = (0, win_width)
-text_x = 700
-text_y = 385
-delay = 10
+WINDOW_WIDTH = 100 * SCALE
+HEIGHT = 100 * SCALE
+FPS = 60
+SETTINGS_WIDTH = 400
+ALL_WIDTH = WINDOW_WIDTH + SETTINGS_WIDTH
+ALLOWED_X = (0, WINDOW_WIDTH)
+TEXT_X = 700
+TEXT_Y = 385
+DELAY = 10
 LINES = 'LINES'
 ERASER = 'ERASER'
 
@@ -37,26 +29,51 @@ YELLOW = (255, 186, 0, 255)
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
 
-# Позиции и переменные
+# Звуки и шрифты
+ICON_IMAGE = pygame.image.load('sounds/character.png')
+DOTS_S = pygame.mixer.Sound('sounds/dots.ogg')
+DOTS_LINES_S = pygame.mixer.Sound('sounds/dots.mp3')
+LINES_S = pygame.mixer.Sound('sounds/line.mp3')
+ERASER_S = pygame.mixer.Sound('sounds/eraser.ogg')
+SUCCESS_S = pygame.mixer.Sound('sounds/success.ogg')
+ERROR_S = pygame.mixer.Sound('sounds/sharp.mp3')
+UPDATE_S = pygame.mixer.Sound('sounds/update.ogg')
+BUTTON_S = pygame.mixer.Sound('sounds/button.ogg')
+pygame.mixer.music.load('sounds/draw.mp3')
+FONT = pygame.font.SysFont('collibri', 36)
+
+# Глобальные переменные
 start_pos = None
 start_pos_flag = False
 end_pos = None
 end_pos_flag = False
 moving_flag = False
 default_start_pos = (SCALE * 2, SCALE * 2)
-default_end_pos = (win_width - SCALE * 2, win_height - SCALE * 2)
+default_end_pos = (WINDOW_WIDTH - SCALE * 2, HEIGHT - SCALE * 2)
 dots = []
 mode = LINES
 phase_drawing = True
 objects = []
-icon_image = pygame.image.load('sounds/character.png')
-dots_s = pygame.mixer.Sound('sounds/dots.ogg')
-dotsl_s = pygame.mixer.Sound('sounds/dots.mp3')
-lines_s = pygame.mixer.Sound('sounds/line.mp3')
-eraser_s = pygame.mixer.Sound('sounds/eraser.ogg')
-success_s = pygame.mixer.Sound('sounds/success.ogg')
-error_s = pygame.mixer.Sound('sounds/sharp.mp3')
-update_s = pygame.mixer.Sound('sounds/update.ogg')
-button_s = pygame.mixer.Sound('sounds/button.ogg')
-pygame.mixer.music.load('sounds/draw.mp3')
-font = pygame.font.SysFont('collibri', 36)
+
+# Инициализация проекта
+SCREEN = pygame.display.set_mode((ALL_WIDTH, HEIGHT))
+pygame.display.set_caption('Shortest way searcher')
+pygame.display.set_icon(ICON_IMAGE)
+SETTINGS = pygame.Surface((SETTINGS_WIDTH, HEIGHT))
+SETTINGS.fill(DARK_GRAY)
+CLOCK = pygame.time.Clock()
+START = pygame.Surface((SCALE * 2, SCALE * 2))
+START.fill(GREEN)
+END = pygame.Surface((SCALE * 2, SCALE * 2))
+END.fill(RED)
+BLANK = pygame.surface.Surface((350, 175))
+BLANK.fill(GRAY)
+if HALF_SCALE >= 0:
+    HALF_SCALE = 1
+LINES_SIZE = SCALE
+COMPRESSION = 1
+if COMPRESSION < 1:
+    COMPRESSION = 1
+LINES_SCALE = 1
+if COMPRESSION > 1:
+    LINES_SCALE = COMPRESSION // 2
