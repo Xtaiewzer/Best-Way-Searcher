@@ -95,7 +95,7 @@ def funcs():
 
 
 # Функция для обновления поля
-def reload():
+def restart():
     global start_pos_flag, start_pos, end_pos, end_pos_flag, \
         default_end_pos, default_start_pos, dots, mode, objects, \
         phase_drawing
@@ -121,10 +121,10 @@ def close(e):
         sys.exit()
 
 
-# Кнопка для обновления экрана
-def upd_button(event):
+# Кнопка для перезапуска программы
+def rst_button(event):
     button_surf = pygame.Surface((300, 55))
-    text = FONT.render('UPDATE', True, BLACK)
+    text = FONT.render('RESTART', True, BLACK)
     center = (700, 250)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
@@ -133,7 +133,7 @@ def upd_button(event):
     if button.collidepoint(mouse_pos):
         button_surf.fill(LIGHT_GRAY)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            reload()
+            restart()
             BUTTON_S.play()
     SCREEN.blit(button_surf, button)
     SCREEN.blit(text, text_rect)
@@ -276,7 +276,7 @@ def put_blank():
 # Функция для обработки кнопок
 def buttons(e):
     close(e)
-    upd_button(e)
+    rst_button(e)
     random_button(e)
     draw_button(e)
     test_button(e)
