@@ -29,8 +29,8 @@ YELLOW = (255, 186, 0, 255)
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
 
-# Звуки и шрифты
-ICON_IMAGE = pygame.image.load('sounds/character.png')
+# Звуки, изображения и шрифты, используемые в программе
+ICON_IMAGE = pygame.image.load('images/character.png')
 DOTS_S = pygame.mixer.Sound('sounds/dots.ogg')
 DOTS_LINES_S = pygame.mixer.Sound('sounds/dots.mp3')
 LINES_S = pygame.mixer.Sound('sounds/line.mp3')
