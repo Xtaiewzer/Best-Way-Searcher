@@ -1,3 +1,4 @@
+import time
 from collections import deque
 from math import inf
 
@@ -7,7 +8,7 @@ INF = inf
 
 # Алгоритм для нахождения кратчайшего пути
 # *Описание его работы*
-def Wave_algorythm(field, s, t):
+def Wave_algorythm(field, s, f):
     w = len(field)
     h = len(field[0])
     delta = ((0, -1), (0, 1), (1, 0), (-1, 0),
@@ -20,7 +21,7 @@ def Wave_algorythm(field, s, t):
     d[s[0]][s[1]] = 0
     used[s[0]][s[1]] = True
     queue.append(s)
-    while len(queue) != 0:
+    while len(queue):
         x, y = queue.popleft()
         for dx, dy in delta:
             nx, ny = x + dx, y + dy
@@ -30,9 +31,12 @@ def Wave_algorythm(field, s, t):
                 p[nx][ny] = (x, y)
                 used[nx][ny] = True
                 queue.append((nx, ny))
-
-    cur = t
+        if used[f[0]][f[1]]:
+            break
+    cur = f
     way = []
+    for i in p:
+        print(i)
     while 1:
 
         next = p[cur[0]][cur[1]]
