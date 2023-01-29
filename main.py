@@ -163,8 +163,7 @@ def randomizer_dots():
         for j in range(i):
             randx = random.randint(0, WINDOW_WIDTH - SCALE)
             randy = random.randint(0, HEIGHT - SCALE)
-            randrange = random.randint(1, i)
-            pygame.draw.circle(SCREEN, YELLOW, (randx, randy), randrange)
+            pygame.draw.circle(SCREEN, YELLOW, (randx, randy), i)
 
 
 #  Кнопка для случайного заполнения поля
@@ -267,7 +266,7 @@ def screen_text(text, c_x, c_y):
     SCREEN.blit(scr_text, scr_text_rect)
 
 
-# Функция для обновления текста на экране
+# Функция для обновления текста на текстовом экране
 def put_blank():
     SCREEN.blit(BLANK, (525, 300))
     pygame.draw.line(SCREEN, YELLOW, (525, 300), (875, 300), 5)
@@ -293,14 +292,13 @@ def run():
     put_blank()
     screen_text('Set start position', TEXT_X, TEXT_Y)
 
-    # Этап для рисования:
-    # Отмечается начальная и конечная точки;
-    # Создаются препятствия
+    # Этап для установки начальной и конечной точек и рисования:
     while phase_drawing:
         CLOCK.tick(FPS)
         for e in pygame.event.get():
             buttons(e)
             if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
+                # Отмечается стартовая точка и конечная точка;
                 if not start_pos_flag:
                     starting(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
@@ -309,6 +307,7 @@ def run():
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     put_blank()
                     screen_text('Set finish position', TEXT_X, TEXT_Y)
+                    # Создаются препятствия
                 elif end_pos_flag:
                     put_blank()
                     screen_text('Now, draw the environment', TEXT_X, TEXT_Y)
