@@ -321,7 +321,7 @@ def run():
 
     # Этап обработки поля в схему для
     # последующей обработки алгоритмом
-    scheme = ''
+    scheme = [[None] * HEIGHT for _ in range(WINDOW_WIDTH)]
     put_blank()
     screen_text('Searching the shortest way...', TEXT_X, TEXT_Y)
     pygame.display.update()
@@ -330,11 +330,9 @@ def run():
             funcs()
             pix = SCREEN.get_at((x, y))
             if pix == YELLOW:
-                scheme += '0'
+                scheme[x][y] = False
             else:
-                scheme += '1'
-        scheme += '\n'
-    scheme = scheme.split('\n')
+                scheme[x][y] = True
 
     # Схема отправляется на обработку алгоритму
     way = Wave_algorythm(scheme, (start_pos[0] // COMPRESSION, start_pos[1] // COMPRESSION),

@@ -26,7 +26,7 @@ def Wave_algorythm(field, s, f):
         for dx, dy in delta:
             nx, ny = x + dx, y + dy
             if 0 < nx < w and 0 < ny < h \
-                    and not used[nx][ny] and field[nx][ny] != '0':
+                    and not used[nx][ny] and field[nx][ny]:
                 d[nx][ny] = d[x][y] + 1
                 p[nx][ny] = (x, y)
                 used[nx][ny] = True
@@ -35,8 +35,6 @@ def Wave_algorythm(field, s, f):
             break
     cur = f
     way = []
-    for i in p:
-        print(i)
     while 1:
 
         next = p[cur[0]][cur[1]]
