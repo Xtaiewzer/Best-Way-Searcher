@@ -19,11 +19,11 @@ DELTA = ((0, -1), (0, 1), (1, 0), (-1, 0),
 # превращает проложенный до нее путь в план движения и
 # возвращает его обратно Программе
 def Wave_algorythm(field, s, f):
-    w = len(field)
-    h = len(field[0])
-    distance = [[INF] * h for _ in range(w)]
-    path = [[None] * h for _ in range(w)]
-    used = [[False] * h for _ in range(w)]
+    weight = len(field)
+    height = len(field[0])
+    distance = [[INF] * height for _ in range(weight)]
+    path = [[None] * height for _ in range(weight)]
+    used = [[False] * height for _ in range(weight)]
     queue = deque()
 
     distance[s[0]][s[1]] = 0
@@ -33,7 +33,7 @@ def Wave_algorythm(field, s, f):
         x, y = queue.popleft()
         for dx, dy in DELTA:
             nx, ny = x + dx, y + dy
-            if 0 < nx < w and 0 < ny < h \
+            if 0 < nx < weight and 0 < ny < height \
                     and not used[nx][ny] and field[nx][ny]:
                 distance[nx][ny] = distance[x][y] + 1
                 path[nx][ny] = (x, y)
