@@ -3,7 +3,9 @@ from math import inf
 
 # Невозможно большая длина пути по умолчанию
 INF = inf
-
+# Разница в координатах текущей клетки и клетки-соседа
+DELTA = ((0, -1), (0, 1), (1, 0), (-1, 0),
+         (1, 1), (1, -1), (-1, 1), (-1, -1))
 
 # Алгоритм для нахождения кратчайшего пути
 # Алгоритм ищет путь до каждой точки вокруг стартовой точки
@@ -14,8 +16,6 @@ INF = inf
 def Wave_algorythm(field, s, f):
     w = len(field)
     h = len(field[0])
-    delta = ((0, -1), (0, 1), (1, 0), (-1, 0),
-             (1, 1), (1, -1), (-1, 1), (-1, -1))
     d = [[INF] * h for _ in range(w)]
     p = [[None] * h for _ in range(w)]
     used = [[False] * h for _ in range(w)]
@@ -26,7 +26,7 @@ def Wave_algorythm(field, s, f):
     queue.append(s)
     while len(queue):
         x, y = queue.popleft()
-        for dx, dy in delta:
+        for dx, dy in DELTA:
             nx, ny = x + dx, y + dy
             if 0 < nx < w and 0 < ny < h \
                     and not used[nx][ny] and field[nx][ny]:
