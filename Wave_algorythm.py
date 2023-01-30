@@ -11,6 +11,7 @@ INF = inf
 DELTA = ((0, -1), (0, 1), (1, 0), (-1, 0),
          (1, 1), (1, -1), (-1, 1), (-1, -1))
 
+
 # Алгоритм для нахождения кратчайшего пути
 # Алгоритм ищет путь до каждой точки вокруг стартовой точки
 # до того момента пока не найдет конечную точку
@@ -20,12 +21,12 @@ DELTA = ((0, -1), (0, 1), (1, 0), (-1, 0),
 def Wave_algorythm(field, s, f):
     w = len(field)
     h = len(field[0])
-    d = [[INF] * h for _ in range(w)]
-    p = [[None] * h for _ in range(w)]
+    distance = [[INF] * h for _ in range(w)]
+    path = [[None] * h for _ in range(w)]
     used = [[False] * h for _ in range(w)]
     queue = deque()
 
-    d[s[0]][s[1]] = 0
+    distance[s[0]][s[1]] = 0
     used[s[0]][s[1]] = True
     queue.append(s)
     while len(queue):
@@ -34,8 +35,8 @@ def Wave_algorythm(field, s, f):
             nx, ny = x + dx, y + dy
             if 0 < nx < w and 0 < ny < h \
                     and not used[nx][ny] and field[nx][ny]:
-                d[nx][ny] = d[x][y] + 1
-                p[nx][ny] = (x, y)
+                distance[nx][ny] = distance[x][y] + 1
+                path[nx][ny] = (x, y)
                 used[nx][ny] = True
                 queue.append((nx, ny))
         if used[f[0]][f[1]]:
@@ -44,7 +45,7 @@ def Wave_algorythm(field, s, f):
     way = []
     while 1:
 
-        next = p[cur[0]][cur[1]]
+        next = path[cur[0]][cur[1]]
         if next == None:
             break
         way.append((cur[0] - next[0], cur[1] - next[1]))
