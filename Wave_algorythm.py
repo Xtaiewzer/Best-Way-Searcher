@@ -44,12 +44,10 @@ def Wave_algorythm(field, s, f):
     cur = f
     way = []
     while 1:
-
         next = path[cur[0]][cur[1]]
         if next == None:
             break
         way.append((cur[0] - next[0], cur[1] - next[1]))
-
         cur = next
     way.reverse()
 
