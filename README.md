@@ -1,2 +1,2 @@
 # Best-Way-Searcher
-For use the project you must install Pygame
+You must install Pygame to launch the project
