@@ -2,9 +2,11 @@
 Ссылки на интернет-ресурсы для установки исходных файлов проекта:
 
 	Яндекс.Диск:
+
 	https://disk.yandex.ru/d/QQ2y9RT9aj-76Q
 
 	GitHub:
+
 	https://github.com/Xtaiewzer/Best-Way-Searcher
 
 
