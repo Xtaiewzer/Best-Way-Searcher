@@ -1,3 +1,4 @@
+#import PIL
 import sys
 import random
 import pygame.event
@@ -123,9 +124,9 @@ def close(e):
 
 # Кнопка для перезапуска программы
 def rst_button(event):
-    button_surf = pygame.Surface((300, 55))
-    text = FONT.render('RESTART', True, BLACK)
-    center = (700, 250)
+    button_surf = pygame.Surface((55, 55))
+    text = FONT.render('R', True, BLACK)
+    center = (700, 550)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
@@ -259,6 +260,32 @@ def mode_button(event):
     SCREEN.blit(text, text_rect)
 
 
+def image_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = FONT.render('IMAGE', True, BLACK)
+    center = (600, 250)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    button_surf.fill(WHITE)
+    mouse_pos = pygame.mouse.get_pos()
+    if button.collidepoint(mouse_pos):
+        button_surf.fill(LIGHT_GRAY)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            BUTTON_S.play()
+            image_loading('images/lab.png')
+    else:
+        button_surf.fill(WHITE)
+    SCREEN.blit(button_surf, button)
+    SCREEN.blit(text, text_rect)
+
+
+def image_loading(filename):
+    image = pygame.image.load(filename)
+    image = pygame.transform.scale(image, (WINDOW_WIDTH, HEIGHT))
+    image_rect = image.get_rect(center=(250, 250))
+    SCREEN.blit(image, image_rect)
+
+
 # Функция для вывода текста в специальное окошко
 def screen_text(text, c_x, c_y):
     scr_text = FONT.render(text, True, WHITE)
@@ -276,11 +303,12 @@ def put_blank():
 # Функция для обработки кнопок
 def buttons(e):
     close(e)
-    rst_button(e)
+    #rst_button(e)
     random_button(e)
     draw_button(e)
     test_button(e)
     mode_button(e)
+    image_button(e)
 
 
 # Функция для запуска программы
