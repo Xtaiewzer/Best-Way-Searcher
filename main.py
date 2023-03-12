@@ -1,4 +1,4 @@
-#import PIL
+# import PIL
 import sys
 import random
 import pygame.event
@@ -91,7 +91,7 @@ def link_dots():
 # Функция для обработки кнопок и обновления экрана
 def funcs():
     for e in pygame.event.get():
-        buttons(e)
+        buttons_and_events(e)
         pygame.display.update()
 
 
@@ -123,10 +123,10 @@ def close(e):
 
 
 # Кнопка для перезапуска программы
-def rst_button(event):
-    button_surf = pygame.Surface((55, 55))
-    text = FONT.render('R', True, BLACK)
-    center = (700, 550)
+def restart_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = FONT.render('RESTART', True, BLACK)
+    center = (800, 50)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
@@ -286,6 +286,39 @@ def image_button(event):
     SCREEN.blit(text, text_rect)
 
 
+# Загрузить последнее изображение
+def last_button(event):
+    button_surf = pygame.Surface((150, 55))
+    text = FONT.render('LAST', True, BLACK)
+    center = (800, 250)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    button_surf.fill(WHITE)
+    mouse_pos = pygame.mouse.get_pos()
+    if button.collidepoint(mouse_pos):
+        button_surf.fill(LIGHT_GRAY)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            BUTTON_S.play()
+    else:
+        button_surf.fill(WHITE)
+    SCREEN.blit(button_surf, button)
+    SCREEN.blit(text, text_rect)
+
+
+# Функция для случайного заполнения поля
+def random_hotkey(event):
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+        if phase_drawing and end_pos_flag:
+            if len(dots) == 1:
+                dots.append((random.randint(0, WINDOW_WIDTH - SCALE),
+                             random.randint(0, HEIGHT - SCALE)))
+                link_dots()
+            randomizer_dots()
+        elif not start_pos_flag and not len(dots):
+            DOTS_S.play()
+            randomizer_pos()
+
+
 def image_loading(filename):
     image = pygame.image.load(filename)
     image = pygame.transform.scale(image, (WINDOW_WIDTH, HEIGHT))
@@ -308,14 +341,15 @@ def put_blank():
 
 
 # Функция для обработки кнопок
-def buttons(e):
-    close(e)
-    #rst_button(e)
-    random_button(e)
-    draw_button(e)
-    test_button(e)
-    mode_button(e)
-    image_button(e)
+def buttons_and_events(event):
+    close(event)
+    restart_button(event)
+    last_button(event)
+    random_hotkey(event)
+    draw_button(event)
+    test_button(event)
+    mode_button(event)
+    image_button(event)
 
 
 # Функция для запуска программы
@@ -331,7 +365,7 @@ def run():
     while phase_drawing:
         CLOCK.tick(FPS)
         for e in pygame.event.get():
-            buttons(e)
+            buttons_and_events(e)
             if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
                 # Отмечается стартовая точка и конечная точка;
                 if not start_pos_flag:
