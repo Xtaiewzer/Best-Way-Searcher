@@ -44,7 +44,6 @@ def check_pos_on_valid():
             color = SCREEN.get_at(end_pos)
 
 
-
 # С помощью этой функции происходит рисование линий на экране
 def drawing(e):
     global mode, DELAY
@@ -149,6 +148,17 @@ def restart_button(event):
     SCREEN.blit(text, text_rect)
 
 
+def check_deviation(pix):
+    deviation = 0.5
+    return (ground_color[0] - deviation * ground_color[0] <= pix[0] <=
+            ground_color[0] + deviation * ground_color[0]) and \
+        (ground_color[1] - deviation * ground_color[1] <= pix[1] <=
+         ground_color[1] + deviation * ground_color[1]) and \
+        (ground_color[2] - deviation * ground_color[2] <= pix[2] <=
+         ground_color[2] + deviation * ground_color[2]) or pix == GREEN \
+        or pix == RED or pix == LIGHT_GRAY
+
+
 # Функция для случайного заполнения поля
 def randomizer_pos():
     global start_pos, start_pos_flag, end_pos, end_pos_flag
@@ -169,7 +179,6 @@ def get_random_tuple():
 
 
 def randomizer_dots():
-    global dots
 
     for i in range(2, 4):
         for j in range(i):
@@ -283,27 +292,28 @@ def image_button(event):
     button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
     mouse_pos = pygame.mouse.get_pos()
-    if button.collidepoint(mouse_pos):
-        button_surf.fill(LIGHT_GRAY)
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            BUTTON_S.play()
-            try:
-                new_image = filedialog.askopenfilename(filetypes=[
-                    ('image', '*.jpeg*'),
-                    ('image', '*.jpg*'),
-                    ('image', '*.png*')
-                ])
-                print(new_image)
-                image_loading(new_image)
-                for dirs, folders, files in os.walk(path):
-                    shutil.copy2(new_image, dirs)
-                image_loaded = True
-            except:
-                put_blank()
-                screen_text('Cannot upload the image', TEXT_X, TEXT_Y)
-                image_loaded = False
+    if not end_pos_flag:
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                BUTTON_S.play()
+                try:
+                    new_image = filedialog.askopenfilename(filetypes=[
+                        ('image', '*.jpeg*'),
+                        ('image', '*.jpg*'),
+                        ('image', '*.png*')
+                    ])
+                    print(new_image)
+                    image_loading(new_image)
+                    for dirs, folders, files in os.walk(path):
+                        shutil.copy2(new_image, dirs)
+                    image_loaded = True
+                except:
+                    put_blank()
+                    screen_text('Cannot upload the image', TEXT_X, TEXT_Y)
+                    image_loaded = False
     else:
-        button_surf.fill(WHITE)
+        button_surf.fill(LIGHT_GRAY)
     SCREEN.blit(button_surf, button)
     SCREEN.blit(text, text_rect)
 
@@ -319,18 +329,19 @@ def log_button(event):
     button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
     mouse_pos = pygame.mouse.get_pos()
-    if button.collidepoint(mouse_pos):
-        button_surf.fill(LIGHT_GRAY)
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            BUTTON_S.play()
-            for dirs, folders, files in os.walk(path):
-                for i in range(len(files)):
-                    if os.path.splitext(files[i])[1] in allowed_splits:
-                        obj = Log(dirs + '/' + files[i], i, files[i])
-                        logs.append(obj)
-            log_flag = True
+    if not end_pos_flag:
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                BUTTON_S.play()
+                for dirs, folders, files in os.walk(path):
+                    for i in range(len(files)):
+                        if os.path.splitext(files[i])[1] in allowed_splits:
+                            obj = Log(dirs + '/' + files[i], i, files[i])
+                            logs.append(obj)
+                log_flag = True
     else:
-        button_surf.fill(WHITE)
+        button_surf.fill(LIGHT_GRAY)
     SCREEN.blit(button_surf, button)
     SCREEN.blit(text, text_rect)
 
@@ -385,7 +396,7 @@ def buttons_and_events(event):
             j.display()
 
 
-    # Функция для запуска программы
+# Функция для запуска программы
 def run():
     global phase_drawing, ground_color
     SCREEN.fill(LIGHT_GRAY)
@@ -442,8 +453,7 @@ def run():
         for y in range(0, HEIGHT, COMPRESSION):
             check_on_close()
             pix = SCREEN.get_at((x, y))
-            if pix == ground_color or pix == GREEN\
-                    or pix == RED or pix == LIGHT_GRAY:
+            if check_deviation(pix):
                 scheme[x][y] = True
             else:
                 scheme[x][y] = False

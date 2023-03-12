@@ -7,7 +7,7 @@ class Log:
         self.filename = filename
         self.number = number
         self.text = FONT.render(text, True, BLACK)
-        self.text_rect = self.text.get_rect(center=(750, 35 + 70 * self.number))
+        self.text_rect = self.text.get_rect(center=(750, 35 + 75 * self.number))
         self.surf_rect = pygame.Surface((400, 70))
         self.center = (700, 35 + 75 * self.number)
         self.surf = self.surf_rect.get_rect(center=self.center)
