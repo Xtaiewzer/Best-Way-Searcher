@@ -415,7 +415,8 @@ def run():
         for y in range(0, HEIGHT, COMPRESSION):
             check_on_close()
             pix = SCREEN.get_at((x, y))
-            if pix == ground_color or pix == GREEN or pix == RED:
+            if pix == ground_color or pix == GREEN\
+                    or pix == RED or pix == LIGHT_GRAY:
                 scheme[x][y] = True
             else:
                 scheme[x][y] = False
