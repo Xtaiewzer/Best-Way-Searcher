@@ -154,17 +154,21 @@ def randomizer_pos():
 # Функция для случайного заполнения массива точек
 def randomizer_dots():
     global dots
+
+    def get_random_tuple():
+        return (random.randint(0, WINDOW_WIDTH - SCALE),
+                random.randint(0, HEIGHT - SCALE))
+
+    if len(dots) == 1:
+        dots.append(get_random_tuple())
+        link_dots()
     for i in range(2, 4):
         for j in range(i):
-            randx = random.randint(0, WINDOW_WIDTH - SCALE)
-            randy = random.randint(0, HEIGHT - SCALE)
-            dots.append((randx, randy))
+            dots.append(get_random_tuple())
         link_dots()
     for i in range(2, 8):
         for j in range(i):
-            randx = random.randint(0, WINDOW_WIDTH - SCALE)
-            randy = random.randint(0, HEIGHT - SCALE)
-            pygame.draw.circle(SCREEN, YELLOW, (randx, randy), i)
+            pygame.draw.circle(SCREEN, YELLOW, get_random_tuple(), i)
 
 
 #  Кнопка для случайного заполнения поля
@@ -309,10 +313,6 @@ def last_button(event):
 def random_hotkey(event):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
         if phase_drawing and end_pos_flag:
-            if len(dots) == 1:
-                dots.append((random.randint(0, WINDOW_WIDTH - SCALE),
-                             random.randint(0, HEIGHT - SCALE)))
-                link_dots()
             randomizer_dots()
         elif not start_pos_flag and not len(dots):
             DOTS_S.play()
