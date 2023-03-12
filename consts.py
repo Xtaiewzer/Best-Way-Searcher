@@ -30,6 +30,8 @@ GRAY = (60, 60, 60, 255)
 YELLOW = (255, 186, 0, 255)
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
+DARK_WHITE = (210, 210, 210, 255)
+WHITE_GRAY = (100, 100, 100, 255)
 
 # Звуки, изображения и шрифты, используемые в программе
 ICON_IMAGE = pygame.image.load('images/character.png')
@@ -57,7 +59,11 @@ dots = []
 mode = LINES
 phase_drawing = True
 image_loaded = False
+log_flag = False
 objects = []
+logs = []
+allowed_splits = ['.jpg', '.jpeg', '.png']
+path = 'logs'
 
 # Инициализация проекта
 SCREEN = pygame.display.set_mode((ALL_WIDTH, HEIGHT))

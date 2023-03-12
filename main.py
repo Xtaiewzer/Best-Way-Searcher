@@ -1,9 +1,12 @@
-# import PIL
+import shutil
 import sys
+import os
 import random
 import pygame.event
 from Wave_algorythm import *
 from consts import *
+from History import Log
+from tkinter import filedialog
 
 
 # С помощью этой функции создается стартовая точка
@@ -39,6 +42,7 @@ def check_pos_on_valid():
         while color == YELLOW:
             end_pos = get_random_tuple()
             color = SCREEN.get_at(end_pos)
+
 
 
 # С помощью этой функции происходит рисование линий на экране
@@ -284,7 +288,15 @@ def image_button(event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             BUTTON_S.play()
             try:
-                image_loading(askopenfilename())
+                new_image = filedialog.askopenfilename(filetypes=[
+                    ('image', '*.jpeg*'),
+                    ('image', '*.jpg*'),
+                    ('image', '*.png*')
+                ])
+                print(new_image)
+                image_loading(new_image)
+                for dirs, folders, files in os.walk(path):
+                    shutil.copy2(new_image, dirs)
                 image_loaded = True
             except:
                 put_blank()
@@ -298,6 +310,8 @@ def image_button(event):
 
 # Кнопка для просмотра последних макетов
 def log_button(event):
+    global log_flag
+
     button_surf = pygame.Surface((150, 55))
     text = FONT.render('LOG', True, BLACK)
     center = (800, 250)
@@ -309,6 +323,12 @@ def log_button(event):
         button_surf.fill(LIGHT_GRAY)
         if event.type == pygame.MOUSEBUTTONDOWN:
             BUTTON_S.play()
+            for dirs, folders, files in os.walk(path):
+                for i in range(len(files)):
+                    if os.path.splitext(files[i])[1] in allowed_splits:
+                        obj = Log(dirs + '/' + files[i], i, files[i])
+                        logs.append(obj)
+            log_flag = True
     else:
         button_surf.fill(WHITE)
     SCREEN.blit(button_surf, button)
@@ -345,31 +365,27 @@ def put_blank():
     pygame.draw.line(SCREEN, YELLOW, (525, 475), (875, 475), 5)
 
 
-def check_pix_on_valid(pix):
-    global ground_color
-    deviation = 0.7
-    return (ground_color[0] - ground_color[0] * deviation <= pix[0] <=
-            ground_color[0] + ground_color[0] * deviation) and \
-        (ground_color[1] - ground_color[1] * deviation <= pix[1] <=
-         ground_color[1] + ground_color[1] * deviation) and \
-        (ground_color[2] - ground_color[2] * deviation <= pix[2] <=
-         ground_color[2] + ground_color[2] * deviation) or pix == GREEN \
-        or pix == RED or pix == LIGHT_GRAY
-
-
 # Функция для обработки кнопок
 def buttons_and_events(event):
     close(event)
-    restart_button(event)
-    log_button(event)
-    random_hotkey(event)
-    draw_button(event)
-    next_button(event)
-    mode_button(event)
-    image_button(event)
+    if not log_flag:
+        restart_button(event)
+        log_button(event)
+        random_hotkey(event)
+        draw_button(event)
+        next_button(event)
+        mode_button(event)
+        image_button(event)
+    else:
+        surf = pygame.Surface((400, 500))
+        surf.fill(GRAY)
+        surf_rect = surf.get_rect(center=(WINDOW_WIDTH + SETTINGS_WIDTH / 2, HEIGHT / 2))
+        SCREEN.blit(surf, surf_rect)
+        for j in logs:
+            j.display()
 
 
-# Функция для запуска программы
+    # Функция для запуска программы
 def run():
     global phase_drawing, ground_color
     SCREEN.fill(LIGHT_GRAY)
@@ -383,7 +399,7 @@ def run():
         CLOCK.tick(FPS)
         for e in pygame.event.get():
             buttons_and_events(e)
-            if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
+            if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1] and not log_flag:
                 # Отмечается стартовая точка и конечная точка;
                 if not start_pos_flag and not phase_drawing:
                     starting(e)
@@ -403,7 +419,7 @@ def run():
                     drawing(e)
 
         pygame.draw.rect(SCREEN, YELLOW, (0, 0, WINDOW_WIDTH, HEIGHT), SCALE)
-        if start_pos is not None:
+        if start_pos is not None and not log_flag:
             if ground_color is None:
                 ground_color = SCREEN.get_at(start_pos)
             SCREEN.blit(START, (start_pos[0] - SCALE, start_pos[1] - SCALE))
@@ -426,7 +442,8 @@ def run():
         for y in range(0, HEIGHT, COMPRESSION):
             check_on_close()
             pix = SCREEN.get_at((x, y))
-            if check_pix_on_valid(pix):
+            if pix == ground_color or pix == GREEN\
+                    or pix == RED or pix == LIGHT_GRAY:
                 scheme[x][y] = True
             else:
                 scheme[x][y] = False
