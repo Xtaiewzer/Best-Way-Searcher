@@ -11,13 +11,7 @@ def starting(event):
     global start_pos, start_pos_flag
 
     if event.type == pygame.MOUSEBUTTONDOWN:
-        pos = event.pos
-        color = SCREEN.get_at(pos)
-
-        if color == YELLOW:
-            start_pos = default_start_pos
-        else:
-            start_pos = pos
+        start_pos = event.pos
 
         DOTS_S.play()
         start_pos_flag = True
@@ -28,20 +22,26 @@ def ending(event):
     global end_pos, end_pos_flag, default_end_pos
 
     if event.type == pygame.MOUSEBUTTONDOWN:
-        pos = event.pos
-        color = SCREEN.get_at(pos)
-
-        if SCREEN.get_at(default_end_pos) == GREEN:
-            default_end_pos = default_start_pos
-
-        if color == YELLOW or color == GREEN:
-            end_pos = default_end_pos
-        else:
-            end_pos = pos
+        end_pos = event.pos
 
         DOTS_S.play()
         end_pos_flag = True
 
+def check_pos_on_valid():
+    global end_pos, default_end_pos, start_pos, default_start_pos
+
+    if start_pos is not None:
+        color = SCREEN.get_at(start_pos)
+        if color == YELLOW:
+            start_pos = default_start_pos
+
+    if end_pos is not None:
+        color = SCREEN.get_at(end_pos)
+        if SCREEN.get_at(default_end_pos) == GREEN:
+            default_end_pos = default_start_pos
+
+        elif color == YELLOW or color == GREEN:
+            end_pos = default_end_pos
 
 # С помощью этой функции происходит рисование линий на экране
 def drawing(e):
@@ -143,21 +143,24 @@ def restart_button(event):
 # Функция для случайного заполнения поля
 def randomizer_pos():
     global start_pos, start_pos_flag, end_pos, end_pos_flag
-    start_pos = (random.randint(SCALE * 2, WINDOW_WIDTH - SCALE * 2)
-                 , random.randint(SCALE * 2, HEIGHT - SCALE * 2))
-    end_pos = (random.randint(SCALE * 2, WINDOW_WIDTH - SCALE * 2)
-               , random.randint(SCALE * 2, HEIGHT - SCALE * 2))
-    start_pos_flag = True
-    end_pos_flag = True
+    if not start_pos_flag:
+        start_pos = (get_random_tuple())
+        start_pos_flag = True
+    if not end_pos_flag:
+        end_pos = (get_random_tuple())
+        end_pos_flag = True
+    DOTS_S.play()
+    check_pos_on_valid()
 
 
 # Функция для случайного заполнения массива точек
+def get_random_tuple():
+    return (random.randint(0, WINDOW_WIDTH - SCALE),
+            random.randint(0, HEIGHT - SCALE))
+
+
 def randomizer_dots():
     global dots
-
-    def get_random_tuple():
-        return (random.randint(0, WINDOW_WIDTH - SCALE),
-                random.randint(0, HEIGHT - SCALE))
 
     if len(dots) == 1:
         dots.append(get_random_tuple())
@@ -314,8 +317,7 @@ def random_hotkey(event):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
         if phase_drawing and end_pos_flag:
             randomizer_dots()
-        elif not start_pos_flag and not len(dots):
-            DOTS_S.play()
+        elif not end_pos_flag:
             randomizer_pos()
 
 
@@ -371,12 +373,15 @@ def run():
                 if not start_pos_flag:
                     starting(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
+                    check_pos_on_valid()
                 elif not end_pos_flag:
                     ending(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     put_blank()
                     screen_text('Set finish position', TEXT_X, TEXT_Y)
-                    # Создаются препятствия
+                    check_pos_on_valid()
+
+                # Создаются препятствия
                 elif end_pos_flag:
                     put_blank()
                     screen_text('Now, draw the environment', TEXT_X, TEXT_Y)
