@@ -19,8 +19,7 @@ def starting(event):
 
 # С помощью этой функции создается конечная точка
 def ending(event):
-    global end_pos, end_pos_flag, default_end_pos
-
+    global end_pos, end_pos_flag
     if event.type == pygame.MOUSEBUTTONDOWN:
         end_pos = event.pos
 
@@ -29,20 +28,18 @@ def ending(event):
 
 
 def check_pos_on_valid():
-    global end_pos, default_end_pos, start_pos, default_start_pos
+    global end_pos, start_pos
 
     if start_pos is not None:
-        color = SCREEN.get_at(start_pos)
-        if color == YELLOW:
-            start_pos = default_start_pos
+        while SCREEN.get_at(start_pos) == YELLOW:
+            start_pos = get_random_tuple()
 
     if end_pos is not None:
         color = SCREEN.get_at(end_pos)
-        if SCREEN.get_at(default_end_pos) == GREEN:
-            default_end_pos = default_start_pos
+        while color == YELLOW or color == GREEN:
+            end_pos = get_random_tuple()
+            color = SCREEN.get_at(end_pos)
 
-        elif color == YELLOW or color == GREEN:
-            end_pos = default_end_pos
 
 
 # С помощью этой функции происходит рисование линий на экране
