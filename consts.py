@@ -48,6 +48,7 @@ start_pos_flag = False
 end_pos = None
 end_pos_flag = False
 moving_flag = False
+ground_color = None
 default_start_pos = (SCALE * 2, SCALE * 2)
 default_end_pos = (WINDOW_WIDTH - SCALE * 2, HEIGHT - SCALE * 2)
 dots = []

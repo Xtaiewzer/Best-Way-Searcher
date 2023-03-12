@@ -36,7 +36,7 @@ def check_pos_on_valid():
 
     if end_pos is not None:
         color = SCREEN.get_at(end_pos)
-        while color == YELLOW or color == GREEN:
+        while color == YELLOW:
             end_pos = get_random_tuple()
             color = SCREEN.get_at(end_pos)
 
@@ -104,7 +104,7 @@ def check_on_close():
 def restart():
     global start_pos_flag, start_pos, end_pos, end_pos_flag, \
         default_end_pos, default_start_pos, dots, mode, objects, \
-        phase_drawing
+        phase_drawing, ground_color
 
     pygame.mixer.music.stop()
     UPDATE_S.play()
@@ -112,6 +112,7 @@ def restart():
     phase_drawing = True
     start_pos_flag = False
     end_pos = None
+    ground_color = None
     end_pos_flag = False
     default_start_pos = (SCALE * 2, SCALE * 2)
     default_end_pos = (WINDOW_WIDTH - SCALE * 2, HEIGHT - SCALE * 2)
@@ -359,7 +360,7 @@ def buttons_and_events(event):
 
 # Функция для запуска программы
 def run():
-    global phase_drawing
+    global phase_drawing, ground_color
     SCREEN.fill(LIGHT_GRAY)
     pygame.display.update()
     SCREEN.blit(SETTINGS, (WINDOW_WIDTH, 0))
@@ -389,8 +390,11 @@ def run():
                     put_blank()
                     screen_text('Draw the environment', TEXT_X, TEXT_Y)
                     drawing(e)
+
         pygame.draw.rect(SCREEN, YELLOW, (0, 0, WINDOW_WIDTH, HEIGHT), SCALE)
         if start_pos is not None:
+            if ground_color is None:
+                ground_color = SCREEN.get_at(start_pos)
             SCREEN.blit(START, (start_pos[0] - SCALE, start_pos[1] - SCALE))
         if end_pos is not None:
             SCREEN.blit(END, (end_pos[0] - SCALE, end_pos[1] - SCALE))
@@ -411,10 +415,10 @@ def run():
         for y in range(0, HEIGHT, COMPRESSION):
             check_on_close()
             pix = SCREEN.get_at((x, y))
-            if pix == YELLOW:
-                scheme[x][y] = False
-            else:
+            if pix == ground_color or pix == GREEN or pix == RED:
                 scheme[x][y] = True
+            else:
+                scheme[x][y] = False
 
     # Схема отправляется на обработку алгоритму
     way = Wave_algorythm(scheme, (start_pos[0] // COMPRESSION, start_pos[1] // COMPRESSION),
@@ -458,4 +462,11 @@ def run():
 
 # Запуск программы
 if __name__ == "__main__":
+    # SCREEN.fill(WHITE)
+    # pygame.display.update()
+    # while 1:
+    #     s = pygame.surface.Surface((200, 200))
+    #     s.fill((0, 0, 0, 0))
+    #     SCREEN.blit(s, (0, 0))
+    #     pygame.display.update()
     run()
