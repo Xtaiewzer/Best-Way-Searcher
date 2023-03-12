@@ -1,4 +1,6 @@
 import pygame
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
 pygame.init()  # Инициализация проекта
 
@@ -59,6 +61,7 @@ objects = []
 
 # Инициализация проекта
 SCREEN = pygame.display.set_mode((ALL_WIDTH, HEIGHT))
+Tk().withdraw()
 pygame.display.set_caption('Best way searcher')
 pygame.display.set_icon(ICON_IMAGE)
 SETTINGS = pygame.Surface((SETTINGS_WIDTH, HEIGHT))

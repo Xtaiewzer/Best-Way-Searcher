@@ -41,7 +41,6 @@ def check_pos_on_valid():
             color = SCREEN.get_at(end_pos)
 
 
-
 # С помощью этой функции происходит рисование линий на экране
 def drawing(e):
     global mode, DELAY
@@ -285,7 +284,7 @@ def image_button(event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             BUTTON_S.play()
             try:
-                image_loading('images/lab.png')
+                image_loading(askopenfilename())
                 image_loaded = True
             except:
                 put_blank()
@@ -344,6 +343,18 @@ def put_blank():
     SCREEN.blit(BLANK, (525, 300))
     pygame.draw.line(SCREEN, YELLOW, (525, 300), (875, 300), 5)
     pygame.draw.line(SCREEN, YELLOW, (525, 475), (875, 475), 5)
+
+
+def check_pix_on_valid(pix):
+    global ground_color
+    deviation = 0.7
+    return (ground_color[0] - ground_color[0] * deviation <= pix[0] <=
+            ground_color[0] + ground_color[0] * deviation) and \
+        (ground_color[1] - ground_color[1] * deviation <= pix[1] <=
+         ground_color[1] + ground_color[1] * deviation) and \
+        (ground_color[2] - ground_color[2] * deviation <= pix[2] <=
+         ground_color[2] + ground_color[2] * deviation) or pix == GREEN \
+        or pix == RED or pix == LIGHT_GRAY
 
 
 # Функция для обработки кнопок
@@ -415,8 +426,7 @@ def run():
         for y in range(0, HEIGHT, COMPRESSION):
             check_on_close()
             pix = SCREEN.get_at((x, y))
-            if pix == ground_color or pix == GREEN\
-                    or pix == RED or pix == LIGHT_GRAY:
+            if check_pix_on_valid(pix):
                 scheme[x][y] = True
             else:
                 scheme[x][y] = False
