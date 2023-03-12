@@ -27,6 +27,7 @@ def ending(event):
         DOTS_S.play()
         end_pos_flag = True
 
+
 def check_pos_on_valid():
     global end_pos, default_end_pos, start_pos, default_start_pos
 
@@ -42,6 +43,7 @@ def check_pos_on_valid():
 
         elif color == YELLOW or color == GREEN:
             end_pos = default_end_pos
+
 
 # С помощью этой функции происходит рисование линий на экране
 def drawing(e):
@@ -63,6 +65,8 @@ def drawing(e):
 # Eraser mode <-> Lines mode
 def change_mode():
     global mode
+    if len(dots) != 0:
+        link_dots()
     if mode == LINES:
         mode = ERASER
     else:
@@ -83,13 +87,17 @@ def drawing_lines(e, p):
 
 # Функция, соединяющая точки на графе
 def link_dots():
+    if len(dots) == 0:
+        return
+    if len(dots) == 1:
+        dots.append(get_random_tuple())
     pygame.draw.lines(SCREEN, YELLOW, False, dots, SCALE * LINES_SCALE)
     dots.clear()
     LINES_S.play()
 
 
 # Функция для обработки кнопок и обновления экрана
-def funcs():
+def check_on_close():
     for e in pygame.event.get():
         buttons_and_events(e)
         pygame.display.update()
@@ -162,9 +170,6 @@ def get_random_tuple():
 def randomizer_dots():
     global dots
 
-    if len(dots) == 1:
-        dots.append(get_random_tuple())
-        link_dots()
     for i in range(2, 4):
         for j in range(i):
             dots.append(get_random_tuple())
@@ -175,31 +180,31 @@ def randomizer_dots():
 
 
 #  Кнопка для случайного заполнения поля
-def random_button(event):
-    button_surf = pygame.Surface((150, 55))
-    text = FONT.render('RANDOM', True, BLACK)
-    center = (800, 50)
-    text_rect = text.get_rect(center=center)
-    button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag and not len(dots):
-        button_surf.fill(WHITE)
-        mouse_pos = pygame.mouse.get_pos()
-        if button.collidepoint(mouse_pos):
-            button_surf.fill(LIGHT_GRAY)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                randomizer_dots()
-    elif not start_pos_flag and not len(dots):
-        button_surf.fill(WHITE)
-        mouse_pos = pygame.mouse.get_pos()
-        if button.collidepoint(mouse_pos):
-            button_surf.fill(LIGHT_GRAY)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                DOTS_S.play()
-                randomizer_pos()
-    else:
-        button_surf.fill(LIGHT_GRAY)
-    SCREEN.blit(button_surf, button)
-    SCREEN.blit(text, text_rect)
+# def random_button(event):
+#     button_surf = pygame.Surface((150, 55))
+#     text = FONT.render('RANDOM', True, BLACK)
+#     center = (800, 50)
+#     text_rect = text.get_rect(center=center)
+#     button = button_surf.get_rect(center=center)
+#     if phase_drawing and end_pos_flag and not len(dots):
+#         button_surf.fill(WHITE)
+#         mouse_pos = pygame.mouse.get_pos()
+#         if button.collidepoint(mouse_pos):
+#             button_surf.fill(LIGHT_GRAY)
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 randomizer_dots()
+#     elif not start_pos_flag and not len(dots):
+#         button_surf.fill(WHITE)
+#         mouse_pos = pygame.mouse.get_pos()
+#         if button.collidepoint(mouse_pos):
+#             button_surf.fill(LIGHT_GRAY)
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 DOTS_S.play()
+#                 randomizer_pos()
+#     else:
+#         button_surf.fill(LIGHT_GRAY)
+#     SCREEN.blit(button_surf, button)
+#     SCREEN.blit(text, text_rect)
 
 
 # Кнопка для рисования
@@ -209,7 +214,7 @@ def draw_button(event):
     center = (600, 150)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag and len(dots) > 1 \
+    if phase_drawing and not end_pos_flag and len(dots) > 1 \
             and mode == LINES:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
@@ -224,19 +229,20 @@ def draw_button(event):
 
 
 # Кнопка для активации алгоритма поиска кратчайшего пути
-def test_button(event):
+def next_button(event):
     global phase_drawing
     button_surf = pygame.Surface((150, 55))
-    text = FONT.render('TEST', True, BLACK)
+    text = FONT.render('NEXT', True, BLACK)
     center = (600, 50)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag and not len(dots):
+    if phase_drawing and not end_pos_flag:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
         if button.collidepoint(mouse_pos):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
+                link_dots()
                 phase_drawing = False
                 BUTTON_S.play()
     else:
@@ -253,7 +259,7 @@ def mode_button(event):
     center = (800, 150)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and end_pos_flag and not len(dots):
+    if phase_drawing and not end_pos_flag:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
         if button.collidepoint(mouse_pos):
@@ -285,7 +291,7 @@ def image_button(event):
                 image_loaded = True
             except:
                 put_blank()
-                screen_text('Can`t upload the image', TEXT_X, TEXT_Y)
+                screen_text('Cannot upload the image', TEXT_X, TEXT_Y)
                 image_loaded = False
     else:
         button_surf.fill(WHITE)
@@ -293,10 +299,10 @@ def image_button(event):
     SCREEN.blit(text, text_rect)
 
 
-# Загрузить последнее изображение
-def last_button(event):
+# Кнопка для просмотра последних макетов
+def log_button(event):
     button_surf = pygame.Surface((150, 55))
-    text = FONT.render('LAST', True, BLACK)
+    text = FONT.render('LOG', True, BLACK)
     center = (800, 250)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
@@ -315,9 +321,9 @@ def last_button(event):
 # Функция для случайного заполнения поля
 def random_hotkey(event):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-        if phase_drawing and end_pos_flag:
+        if phase_drawing:
             randomizer_dots()
-        elif not end_pos_flag:
+        elif not phase_drawing:
             randomizer_pos()
 
 
@@ -346,10 +352,10 @@ def put_blank():
 def buttons_and_events(event):
     close(event)
     restart_button(event)
-    last_button(event)
+    log_button(event)
     random_hotkey(event)
     draw_button(event)
-    test_button(event)
+    next_button(event)
     mode_button(event)
     image_button(event)
 
@@ -364,17 +370,17 @@ def run():
     screen_text('Set start position', TEXT_X, TEXT_Y)
 
     # Этап для установки начальной и конечной точек и рисования:
-    while phase_drawing:
+    while not end_pos_flag:
         CLOCK.tick(FPS)
         for e in pygame.event.get():
             buttons_and_events(e)
             if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
                 # Отмечается стартовая точка и конечная точка;
-                if not start_pos_flag:
+                if not start_pos_flag and not phase_drawing:
                     starting(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     check_pos_on_valid()
-                elif not end_pos_flag:
+                elif not end_pos_flag and not phase_drawing:
                     ending(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     put_blank()
@@ -382,9 +388,9 @@ def run():
                     check_pos_on_valid()
 
                 # Создаются препятствия
-                elif end_pos_flag:
+                elif not start_pos_flag and not end_pos_flag:
                     put_blank()
-                    screen_text('Now, draw the environment', TEXT_X, TEXT_Y)
+                    screen_text('Draw the environment', TEXT_X, TEXT_Y)
                     drawing(e)
         pygame.draw.rect(SCREEN, YELLOW, (0, 0, WINDOW_WIDTH, HEIGHT), SCALE)
         if start_pos is not None:
@@ -395,13 +401,18 @@ def run():
 
     # Этап обработки поля в схему для
     # последующей обработки алгоритмом
+    put_blank()
+    screen_text('Chart is handling...', TEXT_X, TEXT_Y)
+    pygame.display.update()
+    pygame.time.wait(1000)
+
     scheme = [[None] * HEIGHT for _ in range(WINDOW_WIDTH)]
     put_blank()
     screen_text('Searching the shortest way...', TEXT_X, TEXT_Y)
     pygame.display.update()
     for x in range(0, WINDOW_WIDTH, COMPRESSION):
         for y in range(0, HEIGHT, COMPRESSION):
-            funcs()
+            check_on_close()
             pix = SCREEN.get_at((x, y))
             if pix == YELLOW:
                 scheme[x][y] = False
@@ -423,7 +434,7 @@ def run():
         pygame.display.update()
         pygame.mixer.music.play(-1)
         for i in way:
-            funcs()
+            check_on_close()
             pygame.draw.rect(SCREEN, ORANGE, rect_hero, SCALE, SCALE)
             pygame.display.update(rect_hero)
             rect_hero.x += i[0] * COMPRESSION
@@ -444,7 +455,7 @@ def run():
 
     # Конец работы программы и ожидание последующих действий
     while 1:
-        funcs()
+        check_on_close()
         CLOCK.tick(FPS)
 
 
