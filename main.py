@@ -261,6 +261,7 @@ def mode_button(event):
 
 
 def image_button(event):
+    global image_loaded
     button_surf = pygame.Surface((150, 55))
     text = FONT.render('IMAGE', True, BLACK)
     center = (600, 250)
@@ -272,7 +273,13 @@ def image_button(event):
         button_surf.fill(LIGHT_GRAY)
         if event.type == pygame.MOUSEBUTTONDOWN:
             BUTTON_S.play()
-            image_loading('images/lab.png')
+            try:
+                image_loading('images/lab.png')
+                image_loaded = True
+            except:
+                put_blank()
+                screen_text('Can`t upload the image', TEXT_X, TEXT_Y)
+                image_loaded = False
     else:
         button_surf.fill(WHITE)
     SCREEN.blit(button_surf, button)

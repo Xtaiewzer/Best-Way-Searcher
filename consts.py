@@ -53,6 +53,7 @@ default_end_pos = (WINDOW_WIDTH - SCALE * 2, HEIGHT - SCALE * 2)
 dots = []
 mode = LINES
 phase_drawing = True
+image_loaded = False
 objects = []
 
 # Инициализация проекта
