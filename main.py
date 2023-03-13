@@ -1,3 +1,4 @@
+from cmath import log
 import shutil
 import sys
 import os
@@ -379,6 +380,7 @@ def put_blank():
 # Функция для обработки кнопок
 def buttons_and_events(event):
     close(event)
+    global log_flag
     if not log_flag:
         restart_button(event)
         log_button(event)
@@ -393,7 +395,17 @@ def buttons_and_events(event):
         surf_rect = surf.get_rect(center=(WINDOW_WIDTH + SETTINGS_WIDTH / 2, HEIGHT / 2))
         SCREEN.blit(surf, surf_rect)
         for j in logs:
-            j.display()
+            j.display(event)
+            if j.clicked:
+                log_flag = False
+                SCREEN.blit(surf, surf_rect)
+                SCREEN.blit(j.preview, j.preview_rect)
+                j.clicked = False
+                break
+            if j.del_click:
+                logs.remove(j)
+                os.remove(j.filename)
+
 
 
 # Функция для запуска программы
