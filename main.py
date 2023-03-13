@@ -1,4 +1,3 @@
-from cmath import log
 import shutil
 import sys
 import os
@@ -180,7 +179,6 @@ def get_random_tuple():
 
 
 def randomizer_dots():
-
     for i in range(2, 4):
         for j in range(i):
             dots.append(get_random_tuple())
@@ -239,23 +237,35 @@ def draw_button(event):
     SCREEN.blit(text, text_rect)
 
 
+# Функция для активации алгоритма поиска кратчайшего пути
+def next_function():
+    global phase_drawing
+    if phase_drawing:
+        link_dots()
+        phase_drawing = False
+        BUTTON_S.play()
+
+
+# Горячая клавиша для активации алгоритма поиска кратчайшего пути
+def next_hotkey(event):
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+        next_function()
+
+
 # Кнопка для активации алгоритма поиска кратчайшего пути
 def next_button(event):
-    global phase_drawing
     button_surf = pygame.Surface((150, 55))
     text = FONT.render('NEXT', True, BLACK)
     center = (600, 50)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and not end_pos_flag:
+    if phase_drawing:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
         if button.collidepoint(mouse_pos):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                link_dots()
-                phase_drawing = False
-                BUTTON_S.play()
+                next_function()
     else:
         button_surf.fill(LIGHT_GRAY)
     SCREEN.blit(button_surf, button)
@@ -293,7 +303,7 @@ def image_button(event):
     button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
     mouse_pos = pygame.mouse.get_pos()
-    if not end_pos_flag:
+    if phase_drawing:
         if button.collidepoint(mouse_pos):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -330,7 +340,7 @@ def log_button(event):
     button = button_surf.get_rect(center=center)
     button_surf.fill(WHITE)
     mouse_pos = pygame.mouse.get_pos()
-    if not end_pos_flag:
+    if phase_drawing:
         if button.collidepoint(mouse_pos):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -349,6 +359,8 @@ def log_button(event):
 
 # Функция для случайного заполнения поля
 def random_hotkey(event):
+    if end_pos_flag:
+        return
     if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
         if phase_drawing:
             randomizer_dots()
@@ -388,10 +400,11 @@ def buttons_and_events(event):
         draw_button(event)
         next_button(event)
         mode_button(event)
+        next_hotkey(event)
         image_button(event)
     else:
         surf = pygame.Surface((400, 500))
-        surf.fill(GRAY)
+        surf.fill(DARK_GRAY)
         surf_rect = surf.get_rect(center=(WINDOW_WIDTH + SETTINGS_WIDTH / 2, HEIGHT / 2))
         SCREEN.blit(surf, surf_rect)
         for j in logs:
@@ -407,15 +420,14 @@ def buttons_and_events(event):
                 os.remove(j.filename)
 
 
-
 # Функция для запуска программы
 def run():
     global phase_drawing, ground_color
     SCREEN.fill(LIGHT_GRAY)
-    pygame.display.update()
     SCREEN.blit(SETTINGS, (WINDOW_WIDTH, 0))
     put_blank()
-    screen_text('Set start position', TEXT_X, TEXT_Y)
+    screen_text('Draw the environment', TEXT_X, TEXT_Y)
+    pygame.display.update()
 
     # Этап для установки начальной и конечной точек и рисования:
     while not end_pos_flag:
@@ -428,13 +440,14 @@ def run():
                     starting(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     check_pos_on_valid()
+                    put_blank()
+                    screen_text('Set start position', TEXT_X, TEXT_Y)
                 elif not end_pos_flag and not phase_drawing:
                     ending(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     put_blank()
                     screen_text('Set finish position', TEXT_X, TEXT_Y)
                     check_pos_on_valid()
-
                 # Создаются препятствия
                 elif not start_pos_flag and not end_pos_flag:
                     put_blank()

@@ -30,6 +30,7 @@ class Log:
             if event.type == pygame.MOUSEBUTTONDOWN and not self.trash_rect.collidepoint(pygame.mouse.get_pos()):
                 self.clicked = True
 
+
             if self.image_rect.collidepoint(pygame.mouse.get_pos()):
                 SCREEN.blit(self.preview, self.preview_rect)
 
