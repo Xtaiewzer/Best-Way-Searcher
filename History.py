@@ -16,8 +16,8 @@ class Log:
         self.clicked = False
 
         self.trash_surf = pygame.image.load('images/trashbox.png')
-        self.trash = pygame.transform.scale(self.trash_surf, (65, 65))
-        self.trash_rect = self.trash.get_rect(center=(850, 35 + 75 * self.number))
+        self.trash = pygame.transform.scale(self.trash_surf, (40, 40))
+        self.trash_rect = self.trash.get_rect(center=(870, 35 + 75 * self.number))
         self.del_click = False
         self.onbutton = False
 
