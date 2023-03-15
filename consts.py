@@ -1,6 +1,5 @@
 import pygame
 from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 
 pygame.init()  # Инициализация проекта
 
@@ -20,18 +19,18 @@ LINES = 'LINES'
 ERASER = 'ERASER'
 
 # Цвета
-BLUE = (0, 140, 240, 255)
-RED = (255, 36, 0, 255)
-GREEN = (167, 252, 0, 255)
+BLUE = (1, 140, 240, 255)
+RED = (255, 36, 1, 255)
+GREEN = (167, 252, 1, 255)
 LIGHT_GRAY = (70, 70, 70, 255)
-ORANGE = (255, 79, 0, 255)
-DARK_GRAY = (50, 50, 50, 255)
-GRAY = (60, 60, 60, 255)
-YELLOW = (255, 186, 0, 255)
-WHITE = (255, 255, 255, 255)
-BLACK = (0, 0, 0, 255)
-DARK_WHITE = (210, 210, 210, 255)
-WHITE_GRAY = (100, 100, 100, 255)
+ORANGE = (255, 79, 1, 255)
+DARK_GRAY = (50, 51, 50, 255)
+GRAY = (60, 60, 59, 255)
+YELLOW = (255, 186, 1, 255)
+WHITE = (255, 255, 254, 255)
+BLACK = (0, 0, 1, 255)
+DARK_WHITE = (210, 209, 210, 255)
+WHITE_GRAY = (100, 101, 100, 255)
 
 # Звуки, изображения и шрифты, используемые в программе
 ICON_IMAGE = pygame.image.load('images/character.png')
@@ -77,6 +76,8 @@ START = pygame.Surface((SCALE * 2, SCALE * 2))
 START.fill(GREEN)
 END = pygame.Surface((SCALE * 2, SCALE * 2))
 END.fill(RED)
+YELLOW_BLANK = pygame.Surface((WINDOW_WIDTH, HEIGHT))
+YELLOW_BLANK.fill(YELLOW)
 BLANK = pygame.surface.Surface((350, 175))
 BLANK.fill(GRAY)
 if HALF_SCALE >= 0:

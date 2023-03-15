@@ -1,4 +1,3 @@
-from cmath import log
 import shutil
 import sys
 import os
@@ -6,7 +5,7 @@ import random
 import pygame.event
 from Wave_algorythm import *
 from consts import *
-from History import Log
+from History import Log, image_handling
 from tkinter import filedialog
 
 
@@ -31,6 +30,7 @@ def ending(event):
         end_pos_flag = True
 
 
+# Проверка позоций стартовой и конечной точек на корректность
 def check_pos_on_valid():
     global end_pos, start_pos
 
@@ -149,11 +149,11 @@ def restart_button(event):
     SCREEN.blit(button_surf, button)
     SCREEN.blit(text, text_rect)
 
-
+# Проверка на соответствие цвета поверхности
 def check_deviation(pix):
     deviation = 0.5
-    return (ground_color[0] - deviation * ground_color[0] <= pix[0] <=
-            ground_color[0] + deviation * ground_color[0]) and \
+    return pix != YELLOW and (ground_color[0] - deviation * ground_color[0] <= pix[0] <=
+                              ground_color[0] + deviation * ground_color[0]) and \
         (ground_color[1] - deviation * ground_color[1] <= pix[1] <=
          ground_color[1] + deviation * ground_color[1]) and \
         (ground_color[2] - deviation * ground_color[2] <= pix[2] <=
@@ -180,8 +180,8 @@ def get_random_tuple():
             random.randint(0, HEIGHT - SCALE))
 
 
+# Функция для случайного заполнения экрана
 def randomizer_dots():
-
     for i in range(2, 4):
         for j in range(i):
             dots.append(get_random_tuple())
@@ -190,35 +190,6 @@ def randomizer_dots():
         for j in range(i):
             pygame.draw.circle(SCREEN, YELLOW, get_random_tuple(), i)
 
-
-#  Кнопка для случайного заполнения поля
-# def random_button(event):
-#     button_surf = pygame.Surface((150, 55))
-#     text = FONT.render('RANDOM', True, BLACK)
-#     center = (800, 50)
-#     text_rect = text.get_rect(center=center)
-#     button = button_surf.get_rect(center=center)
-#     if phase_drawing and end_pos_flag and not len(dots):
-#         button_surf.fill(WHITE)
-#         mouse_pos = pygame.mouse.get_pos()
-#         if button.collidepoint(mouse_pos):
-#             button_surf.fill(LIGHT_GRAY)
-#             if event.type == pygame.MOUSEBUTTONDOWN:
-#                 randomizer_dots()
-#     elif not start_pos_flag and not len(dots):
-#         button_surf.fill(WHITE)
-#         mouse_pos = pygame.mouse.get_pos()
-#         if button.collidepoint(mouse_pos):
-#             button_surf.fill(LIGHT_GRAY)
-#             if event.type == pygame.MOUSEBUTTONDOWN:
-#                 DOTS_S.play()
-#                 randomizer_pos()
-#     else:
-#         button_surf.fill(LIGHT_GRAY)
-#     SCREEN.blit(button_surf, button)
-#     SCREEN.blit(text, text_rect)
-
-
 # Кнопка для рисования
 def draw_button(event):
     button_surf = pygame.Surface((150, 55))
@@ -226,7 +197,7 @@ def draw_button(event):
     center = (600, 150)
     text_rect = text.get_rect(center=center)
     button = button_surf.get_rect(center=center)
-    if phase_drawing and not end_pos_flag and len(dots) > 1 \
+    if phase_drawing and not end_pos_flag and len(dots) > 0 \
             and mode == LINES:
         button_surf.fill(WHITE)
         mouse_pos = pygame.mouse.get_pos()
@@ -275,7 +246,6 @@ def next_button(event):
     SCREEN.blit(text, text_rect)
 
 
-
 # Кнопка для смены режима:
 # Eraser mode <-> Lines mode
 def mode_button(event):
@@ -297,7 +267,7 @@ def mode_button(event):
     SCREEN.blit(button_surf, button)
     SCREEN.blit(text, text_rect)
 
-
+# Функция кнопки для загрузки изображений
 def image_button(event):
     global image_loaded
     button_surf = pygame.Surface((150, 55))
@@ -318,7 +288,6 @@ def image_button(event):
                         ('image', '*.jpg*'),
                         ('image', '*.png*')
                     ])
-                    print(new_image)
                     image_loading(new_image)
                     for dirs, folders, files in os.walk(path):
                         shutil.copy2(new_image, dirs)
@@ -367,6 +336,7 @@ def log_button(event):
     SCREEN.blit(text, text_rect)
 
 
+# Функция кнопки журнала загрузок
 def log_back_button(event):
     global log_flag
 
@@ -393,7 +363,6 @@ def log_back_button(event):
     SCREEN.blit(text, text_rect)
 
 
-
 # Функция для случайного заполнения поля
 def random_hotkey(event):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
@@ -402,12 +371,11 @@ def random_hotkey(event):
         elif not phase_drawing:
             randomizer_pos()
 
-
+# функция загрузки изображения
 def image_loading(filename):
-    image = pygame.image.load(filename)
-    image = pygame.transform.scale(image, (WINDOW_WIDTH, HEIGHT))
-    image_rect = image.get_rect(center=(250, 250))
-    SCREEN.blit(image, image_rect)
+    SCREEN.blit(YELLOW_BLANK, (0, 0))
+    image = image_handling(pygame.image.load(filename))
+    SCREEN.blit(image, image.get_rect(center=(WINDOW_WIDTH // 2, HEIGHT // 2)))
 
 
 # Функция для вывода текста в специальное окошко
@@ -455,6 +423,7 @@ def buttons_and_events(event):
             j.display(event)
             if j.clicked:
                 log_flag = False
+                SCREEN.blit(YELLOW_BLANK, (0, 0))
                 SCREEN.blit(surf, surf_rect)
                 SCREEN.blit(j.preview, j.preview_rect)
                 j.clicked = False
@@ -467,11 +436,19 @@ def buttons_and_events(event):
                 os.remove(j.filename)
 
 
+def joke():
+    pygame.display.set_caption('Пупс Хантер')
+    pygame.display.set_icon(pygame.image.load('logs/photo_2023-01-23_21-51-53.jpg'))
+    face = pygame.image.load('logs/photo_2023-01-23_21-51-53.jpg')
+    face = pygame.transform.scale(face, (500, 500))
+    SCREEN.blit(face, (0, 0))
+
 
 # Функция для запуска программы
 def run():
     global phase_drawing, ground_color
     SCREEN.fill(LIGHT_GRAY)
+    # joke()
     pygame.display.update()
     SCREEN.blit(SETTINGS, (WINDOW_WIDTH, 0))
     put_blank()
@@ -573,11 +550,4 @@ def run():
 
 # Запуск программы
 if __name__ == "__main__":
-    # SCREEN.fill(WHITE)
-    # pygame.display.update()
-    # while 1:
-    #     s = pygame.surface.Surface((200, 200))
-    #     s.fill((0, 0, 0, 0))
-    #     SCREEN.blit(s, (0, 0))
-    #     pygame.display.update()
     run()

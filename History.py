@@ -1,5 +1,4 @@
-import pygame
-from consts import WHITE_GRAY, BLACK, DARK_WHITE, GRAY, SCREEN, FONT
+from consts import *
 
 
 class Log:
@@ -24,25 +23,29 @@ class Log:
         self.del_click = False
         self.onbutton = False
 
-        self.preview = pygame.transform.scale(pygame.image.load(self.filename), (500, 500))
-        self.preview_rect = self.preview.get_rect(center=(250, 250))
+        self.preview = image_handling(pygame.image.load(self.filename))
+        self.preview_rect = self.preview.get_rect(center=(WINDOW_WIDTH // 2, HEIGHT // 2))
 
     def display(self, event):
         if self.surf.collidepoint(pygame.mouse.get_pos()):
             self.surf_rect.fill(WHITE_GRAY)
-            if event.type == pygame.MOUSEBUTTONDOWN and not self.trash_rect.collidepoint(pygame.mouse.get_pos()):
+            if event.type == pygame.MOUSEBUTTONDOWN and \
+                    not self.trash_rect.collidepoint(pygame.mouse.get_pos()):
                 self.clicked = True
+                UPDATE_S.play()
 
             if self.image_rect.collidepoint(pygame.mouse.get_pos()):
+                SCREEN.blit(YELLOW_BLANK, (0, 0))
                 SCREEN.blit(self.preview, self.preview_rect)
 
             if not (self.image_rect.collidepoint(pygame.mouse.get_pos())):
                 surf = pygame.Surface((500, 500))
-                surf.fill(GRAY)
-                surf_rect = surf.get_rect(center=(250, 250))
+                surf.fill(LIGHT_GRAY)
+                surf_rect = surf.get_rect(center=(WINDOW_WIDTH // 2, HEIGHT // 2))
                 SCREEN.blit(surf, surf_rect)
             if self.trash_rect.collidepoint(pygame.mouse.get_pos()):
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    DOTS_S.play()
                     self.del_click = True
         else:
             self.surf_rect.fill(DARK_WHITE)
@@ -50,3 +53,16 @@ class Log:
         SCREEN.blit(self.image, self.image_rect)
         SCREEN.blit(self.text, self.text_rect)
         SCREEN.blit(self.trash, self.trash_rect)
+
+
+# Функция для обработки пропорций изображений
+def image_handling(image):
+    width = image.get_width()
+    height = image.get_height()
+    if width > height:
+        image = pygame.transform.scale(image, (WINDOW_WIDTH, HEIGHT // (width / height)))
+    elif width < height:
+        image = pygame.transform.scale(image, (HEIGHT // (height / width), HEIGHT))
+    else:
+        image = pygame.transform.scale(image, (WINDOW_WIDTH, HEIGHT))
+    return image
