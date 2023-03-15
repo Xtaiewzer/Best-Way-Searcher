@@ -6,7 +6,10 @@ class Log:
     def __init__(self, filename, number, text):
         self.filename = filename
         self.number = number
-        self.text = FONT.render(text, True, BLACK)
+        if len(text) > 9:
+            self.text = FONT.render(text[0:8] + '...', True, BLACK)
+        else:
+            self.text = FONT.render(text, True, BLACK)
         self.text_rect = self.text.get_rect(center=(750, 35 + 75 * self.number))
         self.surf_rect = pygame.Surface((400, 70))
         self.center = (700, 35 + 75 * self.number)
@@ -16,8 +19,8 @@ class Log:
         self.clicked = False
 
         self.trash_surf = pygame.image.load('images/trashbox.png')
-        self.trash = pygame.transform.scale(self.trash_surf, (40, 40))
-        self.trash_rect = self.trash.get_rect(center=(870, 35 + 75 * self.number))
+        self.trash = pygame.transform.scale(self.trash_surf, (65, 65))
+        self.trash_rect = self.trash.get_rect(center=(850, 35 + 75 * self.number))
         self.del_click = False
         self.onbutton = False
 
@@ -29,7 +32,6 @@ class Log:
             self.surf_rect.fill(WHITE_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN and not self.trash_rect.collidepoint(pygame.mouse.get_pos()):
                 self.clicked = True
-
 
             if self.image_rect.collidepoint(pygame.mouse.get_pos()):
                 SCREEN.blit(self.preview, self.preview_rect)

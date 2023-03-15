@@ -1,3 +1,4 @@
+from cmath import log
 import shutil
 import sys
 import os
@@ -13,7 +14,7 @@ from tkinter import filedialog
 def starting(event):
     global start_pos, start_pos_flag
 
-    if event.type == pygame.MOUSEBUTTONDOWN:
+    if event.type == pygame.MOUSEBUTTONDOWN and ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
         start_pos = event.pos
 
         DOTS_S.play()
@@ -23,7 +24,7 @@ def starting(event):
 # С помощью этой функции создается конечная точка
 def ending(event):
     global end_pos, end_pos_flag
-    if event.type == pygame.MOUSEBUTTONDOWN:
+    if event.type == pygame.MOUSEBUTTONDOWN and ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
         end_pos = event.pos
 
         DOTS_S.play()
@@ -47,17 +48,18 @@ def check_pos_on_valid():
 # С помощью этой функции происходит рисование линий на экране
 def drawing(e):
     global mode, DELAY
-    pressed = pygame.mouse.get_pressed()
-    pos = pygame.mouse.get_pos()
-    if mode == LINES:
-        drawing_lines(e, pos)
-    else:  # Eraser mode
-        if pressed[0]:
-            pygame.draw.circle(SCREEN, LIGHT_GRAY, pos, SCALE * 2)
-            DELAY += 1
-            if DELAY % 10 == 0:
-                ERASER_S.play()
-                DELAY = 0
+    if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1]:
+        pressed = pygame.mouse.get_pressed()
+        pos = pygame.mouse.get_pos()
+        if mode == LINES:
+            drawing_lines(e, pos)
+        else:  # Eraser mode
+            if pressed[0]:
+                pygame.draw.circle(SCREEN, LIGHT_GRAY, pos, SCALE * 2)
+                DELAY += 1
+                if DELAY % 10 == 0:
+                    ERASER_S.play()
+                    DELAY = 0
 
 
 # Функция для смены режима:
@@ -179,6 +181,7 @@ def get_random_tuple():
 
 
 def randomizer_dots():
+
     for i in range(2, 4):
         for j in range(i):
             dots.append(get_random_tuple())
@@ -272,6 +275,7 @@ def next_button(event):
     SCREEN.blit(text, text_rect)
 
 
+
 # Кнопка для смены режима:
 # Eraser mode <-> Lines mode
 def mode_button(event):
@@ -345,11 +349,17 @@ def log_button(event):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 BUTTON_S.play()
+                reversed = False
                 for dirs, folders, files in os.walk(path):
+                    if not reversed:
+                        files.reverse()
+                        reversed = True
                     for i in range(len(files)):
                         if os.path.splitext(files[i])[1] in allowed_splits:
                             obj = Log(dirs + '/' + files[i], i, files[i])
                             logs.append(obj)
+                        if len(logs) == 6:
+                            break
                 log_flag = True
     else:
         button_surf.fill(LIGHT_GRAY)
@@ -357,10 +367,35 @@ def log_button(event):
     SCREEN.blit(text, text_rect)
 
 
+def log_back_button(event):
+    global log_flag
+
+    button_surf = pygame.Surface((100, 35))
+    text = FONT.render('BACK', True, BLACK)
+    center = (850, 470)
+    text_rect = text.get_rect(center=center)
+    button = button_surf.get_rect(center=center)
+    button_surf.fill(WHITE)
+    mouse_pos = pygame.mouse.get_pos()
+    surf = pygame.Surface((400, 500))
+    surf.fill(GRAY)
+    surf_rect = surf.get_rect(center=(WINDOW_WIDTH + SETTINGS_WIDTH / 2, HEIGHT / 2))
+    if not end_pos_flag:
+        if button.collidepoint(mouse_pos):
+            button_surf.fill(LIGHT_GRAY)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                BUTTON_S.play()
+                SCREEN.blit(surf, surf_rect)
+                log_flag = False
+    else:
+        button_surf.fill(LIGHT_GRAY)
+    SCREEN.blit(button_surf, button)
+    SCREEN.blit(text, text_rect)
+
+
+
 # Функция для случайного заполнения поля
 def random_hotkey(event):
-    if end_pos_flag:
-        return
     if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
         if phase_drawing:
             randomizer_dots()
@@ -407,23 +442,37 @@ def buttons_and_events(event):
         surf.fill(DARK_GRAY)
         surf_rect = surf.get_rect(center=(WINDOW_WIDTH + SETTINGS_WIDTH / 2, HEIGHT / 2))
         SCREEN.blit(surf, surf_rect)
+        log_back_button(event)
+        if not log_flag:
+            SCREEN.blit(surf, surf_rect)
+            logs.clear()
+            put_blank()
         for j in logs:
+            if not log_flag:
+                logs.clear()
+                put_blank()
+                break
             j.display(event)
             if j.clicked:
                 log_flag = False
                 SCREEN.blit(surf, surf_rect)
                 SCREEN.blit(j.preview, j.preview_rect)
                 j.clicked = False
+                logs.clear()
+                put_blank()
+                screen_text('Draw the environment', TEXT_X, TEXT_Y)
                 break
             if j.del_click:
                 logs.remove(j)
                 os.remove(j.filename)
 
 
+
 # Функция для запуска программы
 def run():
     global phase_drawing, ground_color
     SCREEN.fill(LIGHT_GRAY)
+    pygame.display.update()
     SCREEN.blit(SETTINGS, (WINDOW_WIDTH, 0))
     put_blank()
     screen_text('Draw the environment', TEXT_X, TEXT_Y)
@@ -434,20 +483,19 @@ def run():
         CLOCK.tick(FPS)
         for e in pygame.event.get():
             buttons_and_events(e)
-            if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1] and not log_flag:
+            if not log_flag:
                 # Отмечается стартовая точка и конечная точка;
                 if not start_pos_flag and not phase_drawing:
                     starting(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     check_pos_on_valid()
-                    put_blank()
-                    screen_text('Set start position', TEXT_X, TEXT_Y)
                 elif not end_pos_flag and not phase_drawing:
                     ending(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     put_blank()
                     screen_text('Set finish position', TEXT_X, TEXT_Y)
                     check_pos_on_valid()
+
                 # Создаются препятствия
                 elif not start_pos_flag and not end_pos_flag:
                     put_blank()
