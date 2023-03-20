@@ -1,7 +1,12 @@
 from consts import *
 
 
+# Класс истории, созданый для быстрого доступа к
+# недавно использованным изображениям окружающей среды
 class Log:
+
+    # Инициализация класса, кнопок для выбора изображений, удаления изображений,
+    # перехода между страницами и самого счетчика страниц
     def __init__(self, filename, number, text):
         self.filename = filename
         self.number = number
@@ -26,6 +31,7 @@ class Log:
         self.preview = image_handling(pygame.image.load(self.filename))
         self.preview_rect = self.preview.get_rect(center=(WINDOW_WIDTH // 2, HEIGHT // 2))
 
+    # Функция для отображение элементов графического интерфейса и взаимодействия с ними
     def display(self, event):
         if self.surf.collidepoint(pygame.mouse.get_pos()):
             self.surf_rect.fill(WHITE_GRAY)
