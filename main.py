@@ -484,10 +484,20 @@ def put_blank():
     pygame.draw.line(SCREEN, YELLOW, (525, 475), (875, 475), 5)
 
 
+def page_number():
+    if fil_len % 5 == 0:
+        text = FONT.render(str(str(log_page_counter) + '/' + str(fil_len // 5)), True, WHITE)
+        text_rect = text.get_rect(center=(520, 470))
+    else:
+        text = FONT.render(str(str(log_page_counter) + '/' + str(fil_len // 5 + 1)), True, WHITE)
+        text_rect = text.get_rect(center=(520, 470))
+    SCREEN.blit(text, text_rect)
+
+
 # Функция для обработки кнопок
 def buttons_and_events(event):
     close(event)
-    global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len
+    global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len, log_page_counter
     if not log_flag:
         restart_button(event)
         log_button(event)
@@ -529,12 +539,13 @@ def buttons_and_events(event):
                 logs.remove(j)
                 os.remove(j.filename)
 
-            elif log_page_number + 5 < fil_len:
+            if log_page_number + 5 < fil_len:
                 log_next(event)
             if log_page_number != 0:
                 log_prev(event)
             if page_flag:
                 log_page_number += 5
+                log_page_counter += 1
                 SCREEN.blit(surf, surf_rect)
                 logs.clear()
                 log_next(event)
@@ -542,11 +553,13 @@ def buttons_and_events(event):
                 break
             elif prev_page:
                 log_page_number -= 5
+                log_page_counter -= 1
                 SCREEN.blit(surf, surf_rect)
                 logs.clear()
                 log_prev(event)
                 prev_page = False
                 break
+            page_number()
 
 
 # Функция для запуска программы

@@ -65,6 +65,7 @@ allowed_splits = ['.jpg', '.jpeg', '.png']
 path = 'logs'
 logs = []
 log_page_number = 0
+log_page_counter = 1
 page_flag = False
 prev_page = False
 saved = False
