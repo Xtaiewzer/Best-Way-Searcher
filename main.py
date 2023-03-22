@@ -309,7 +309,7 @@ def image_button(event):
     SCREEN.blit(text, text_rect)
 
 
-# Кнопка для просмотра последних макетов
+# Функция кнопки для перехода в журнал загруженных ранее или нарисованных пользователем изображений
 def log_button(event):
     global log_flag, log_page_number, fil_len
 
@@ -343,7 +343,7 @@ def log_button(event):
     SCREEN.blit(text, text_rect)
 
 
-# Функция кнопки журнала загрузок
+# Функция кнопки для выхода из журнала загруженных изображений
 def log_back_button(event):
     global log_flag
 
@@ -369,7 +369,7 @@ def log_back_button(event):
     SCREEN.blit(text, text_rect)
 
 
-# Функция для следующего лога
+# Функция для отображения следующей страницы во вкладке истории
 def log_next(event):
     global log_page_number, log_flag, page_flag, fil_len
 
@@ -406,7 +406,7 @@ def log_next(event):
     SCREEN.blit(text, text_rect)
 
 
-# Функция для предыдущего лога
+# Функция для отображения предыдущей страницы во вкладке истории
 def log_prev(event):
     global log_page_number, log_flag, prev_page, fil_len
     button_surf = pygame.Surface((50, 35))
@@ -484,6 +484,7 @@ def put_blank():
     pygame.draw.line(SCREEN, YELLOW, (525, 475), (875, 475), 5)
 
 
+# Функция для отображения номера текущей страницы из общего количества во вкладке истории
 def page_number():
     if fil_len % 5 == 0:
         text = FONT.render(str(str(log_page_counter) + '/' + str(fil_len // 5)), True, WHITE)
@@ -494,7 +495,7 @@ def page_number():
     SCREEN.blit(text, text_rect)
 
 
-# Функция для обработки кнопок
+# Функция для обработки кнопок и событий
 def buttons_and_events(event):
     close(event)
     global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len, log_page_counter
@@ -580,6 +581,7 @@ def run():
             if ALLOWED_X[0] < pygame.mouse.get_pos()[0] < ALLOWED_X[1] and not log_flag:
                 # Отмечается стартовая точка и конечная точка;
                 if not start_pos_flag and not phase_drawing:
+                    env_save()
                     starting(e)
                     pygame.draw.rect(SCREEN, YELLOW, (0, 0, SCALE, SCALE))
                     check_pos_on_valid()
