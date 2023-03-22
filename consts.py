@@ -70,6 +70,7 @@ page_flag = False
 prev_page = False
 saved = False
 fil_len = 0
+DEVIATION = 0.5
 
 # Инициализация проекта
 SCREEN = pygame.display.set_mode((ALL_WIDTH, HEIGHT))

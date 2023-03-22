@@ -154,13 +154,12 @@ def restart_button(event):
 
 # Проверка на соответствие цвета поверхности
 def check_deviation(pix):
-    deviation = 0.5
-    return pix != YELLOW and (ground_color[0] - deviation * ground_color[0] <= pix[0] <=
-                              ground_color[0] + deviation * ground_color[0]) and \
-        (ground_color[1] - deviation * ground_color[1] <= pix[1] <=
-         ground_color[1] + deviation * ground_color[1]) and \
-        (ground_color[2] - deviation * ground_color[2] <= pix[2] <=
-         ground_color[2] + deviation * ground_color[2]) or pix == GREEN \
+    return pix != YELLOW and (ground_color[0] - DEVIATION * ground_color[0] <= pix[0] <=
+                              ground_color[0] + DEVIATION * ground_color[0]) and \
+        (ground_color[1] - DEVIATION * ground_color[1] <= pix[1] <=
+         ground_color[1] + DEVIATION * ground_color[1]) and \
+        (ground_color[2] - DEVIATION * ground_color[2] <= pix[2] <=
+         ground_color[2] + DEVIATION * ground_color[2]) or pix == GREEN \
         or pix == RED or pix == LIGHT_GRAY
 
 
@@ -177,7 +176,7 @@ def randomizer_pos():
     check_pos_on_valid()
 
 
-# Функция для случайного заполнения массива точек
+# Функция для случайног о заполнения массива точек
 def get_random_tuple():
     return (random.randint(0, WINDOW_WIDTH - SCALE),
             random.randint(0, HEIGHT - SCALE))
