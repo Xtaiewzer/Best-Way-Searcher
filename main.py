@@ -9,6 +9,15 @@ from history import Log, image_handling
 from tkinter import filedialog
 
 
+reversed = False
+for dirs, folders, files in os.walk(path):
+    if not reversed:
+        files.reverse()
+        fil_len = len(files)
+        all_files = files
+        reversed = True
+
+
 # С помощью этой функции создается стартовая точка
 def starting(event):
     global start_pos, start_pos_flag
@@ -311,7 +320,7 @@ def image_button(event):
 
 # Функция кнопки для перехода в журнал загруженных ранее или нарисованных пользователем изображений
 def log_button(event):
-    global log_flag, log_page_number, fil_len
+    global log_flag, log_page_number, fil_len, all_files
 
     button_surf = pygame.Surface((150, 55))
     text = FONT.render('LOG', True, BLACK)
@@ -326,17 +335,11 @@ def log_button(event):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 BUTTON_S.play()
                 log_flag = True
-                reversed = False
-                for dirs, folders, files in os.walk(path):
-                    if not reversed:
-                        files.reverse()
-                        fil_len = len(files)
-                        needed = files[log_page_number:log_page_number + 5]
-                        reversed = True
-                    for i in range(len(needed)):
-                        if os.path.splitext(needed[i])[1] in allowed_splits:
-                            obj = Log(dirs + '/' + needed[i], i, needed[i])
-                            logs.append(obj)
+                needed = all_files[log_page_number:log_page_number + 5]
+                for i in range(len(needed)):
+                    if os.path.splitext(needed[i])[1] in allowed_splits:
+                        obj = Log(dirs + '/' + needed[i], i, needed[i])
+                        logs.append(obj)
     else:
         button_surf.fill(LIGHT_GRAY)
     SCREEN.blit(button_surf, button)
@@ -345,7 +348,7 @@ def log_button(event):
 
 # Функция кнопки для выхода из журнала загруженных изображений
 def log_back_button(event):
-    global log_flag
+    global log_flag, all_files
 
     button_surf = pygame.Surface((100, 35))
     text = FONT.render('BACK', True, BLACK)
@@ -388,17 +391,11 @@ def log_next(event):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 SCREEN.blit(surf, surf_rect)
-                reversed = False
-                for dirs, folders, files in os.walk(path):
-                    if not reversed:
-                        files.reverse()
-                        fil_len = len(files)
-                        needed = files[log_page_number:log_page_number + 5]
-                        reversed = True
-                    for i in range(len(needed)):
-                        if os.path.splitext(needed[i])[1] in allowed_splits:
-                            obj = Log(dirs + '/' + needed[i], i, needed[i])
-                            logs.append(obj)
+                needed = all_files[log_page_number:log_page_number + 5]
+                for i in range(len(needed)):
+                    if os.path.splitext(needed[i])[1] in allowed_splits:
+                        obj = Log(dirs + '/' + needed[i], i, needed[i])
+                        logs.append(obj)
                 page_flag = True
     else:
         button_surf.fill(LIGHT_GRAY)
@@ -424,17 +421,11 @@ def log_prev(event):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 SCREEN.blit(surf, surf_rect)
-                reversed = False
-                for dirs, folders, files in os.walk(path):
-                    if not reversed:
-                        files.reverse()
-                        fil_len = len(files)
-                        needed = files[log_page_number:log_page_number + 5]
-                        reversed = True
-                    for i in range(len(needed)):
-                        if os.path.splitext(needed[i])[1] in allowed_splits:
-                            obj = Log(dirs + '/' + needed[i], i, needed[i])
-                            logs.append(obj)
+                needed = files[log_page_number:log_page_number + 5]
+                for i in range(len(needed)):
+                    if os.path.splitext(needed[i])[1] in allowed_splits:
+                        obj = Log(dirs + '/' + needed[i], i, needed[i])
+                        logs.append(obj)
                 prev_page = True
     else:
         button_surf.fill(LIGHT_GRAY)
@@ -498,7 +489,7 @@ def page_number():
 # Функция для обработки кнопок и событий
 def buttons_and_events(event):
     close(event)
-    global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len, log_page_counter
+    global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len, log_page_counter, all_files, needed
     if not log_flag:
         restart_button(event)
         log_button(event)
@@ -538,7 +529,19 @@ def buttons_and_events(event):
                 break
             if j.del_click:
                 logs.remove(j)
+                all_files.remove(j.filename[5:])
                 os.remove(j.filename)
+                fil_len = len(all_files)
+                if fil_len % 5 == 0:
+                    if log_page_counter > (fil_len // 5):
+                        log_page_number -= 5
+                        log_page_counter -= 1
+                        logs.clear()
+                        needed = all_files[log_page_number:log_page_number + 5]
+                        for i in range(len(needed)):
+                            if os.path.splitext(needed[i])[1] in allowed_splits:
+                                obj = Log(dirs + '/' + needed[i], i, needed[i])
+                                logs.append(obj)
 
             if log_page_number + 5 < fil_len:
                 log_next(event)
