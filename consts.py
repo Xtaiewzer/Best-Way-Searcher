@@ -1,5 +1,6 @@
 import pygame
 from tkinter import Tk
+import os
 
 pygame.init()  # Инициализация проекта
 
@@ -62,7 +63,7 @@ log_flag = False
 objects = []
 reversed = False
 allowed_splits = ['.jpg', '.jpeg', '.png']
-path = 'logs'
+path = 'dist/main/logs'
 logs = []
 log_page_number = 0
 log_page_counter = 1

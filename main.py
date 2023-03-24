@@ -1,6 +1,5 @@
 import shutil
 import sys
-import os
 import random
 import pygame.event
 from Wave_algorythm import *
@@ -14,7 +13,6 @@ for dirs, folders, files in os.walk(path):
     if not reversed:
         files.reverse()
         fil_len = len(files)
-        all_files = files
         reversed = True
 
 
@@ -116,7 +114,7 @@ def check_on_close():
 def restart():
     global start_pos_flag, start_pos, end_pos, end_pos_flag, \
         default_end_pos, default_start_pos, dots, mode, objects, \
-        phase_drawing, ground_color, logs, log_page_number, saved
+        phase_drawing, ground_color, logs, log_page_number, saved, fil_len, files, log_page_counter
 
     pygame.mixer.music.stop()
     UPDATE_S.play()
@@ -133,7 +131,15 @@ def restart():
     objects = []
     logs.clear()
     log_page_number = 0
+    log_page_counter = 1
     saved = False
+    reversed = False
+    files.clear()
+    for dirs, folders, files in os.walk(path):
+        if not reversed:
+            files.reverse()
+            fil_len = len(files)
+            reversed = True
     run()
 
 
@@ -319,7 +325,7 @@ def image_button(event):
 
 # Функция кнопки для перехода в журнал загруженных ранее или нарисованных пользователем изображений
 def log_button(event):
-    global log_flag, log_page_number, fil_len, all_files
+    global log_flag, log_page_number, fil_len
 
     button_surf = pygame.Surface((150, 55))
     text = FONT.render('LOG', True, BLACK)
@@ -334,7 +340,7 @@ def log_button(event):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 BUTTON_S.play()
                 log_flag = True
-                needed = all_files[log_page_number:log_page_number + 5]
+                needed = files[log_page_number:log_page_number + 5]
                 for i in range(len(needed)):
                     if os.path.splitext(needed[i])[1] in allowed_splits:
                         obj = Log(dirs + '/' + needed[i], i, needed[i])
@@ -347,7 +353,7 @@ def log_button(event):
 
 # Функция кнопки для выхода из журнала загруженных изображений
 def log_back_button(event):
-    global log_flag, all_files
+    global log_flag
 
     button_surf = pygame.Surface((100, 35))
     text = FONT.render('BACK', True, BLACK)
@@ -390,7 +396,7 @@ def log_next(event):
             button_surf.fill(LIGHT_GRAY)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 SCREEN.blit(surf, surf_rect)
-                needed = all_files[log_page_number:log_page_number + 5]
+                needed = files[log_page_number:log_page_number + 5]
                 for i in range(len(needed)):
                     if os.path.splitext(needed[i])[1] in allowed_splits:
                         obj = Log(dirs + '/' + needed[i], i, needed[i])
@@ -488,7 +494,7 @@ def page_number():
 # Функция для обработки кнопок и событий
 def buttons_and_events(event):
     close(event)
-    global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len, log_page_counter, all_files, needed
+    global log_flag, log_page_number, page_flag, prev_page, image_loaded, fil_len, log_page_counter, files, needed
     if not log_flag:
         restart_button(event)
         log_button(event)
@@ -528,15 +534,15 @@ def buttons_and_events(event):
                 break
             if j.del_click:
                 logs.remove(j)
-                all_files.remove(j.filename[5:])
+                files.remove(j.filename[5:])
                 os.remove(j.filename)
-                fil_len = len(all_files)
+                fil_len = len(files)
                 if fil_len % 5 == 0:
                     if log_page_counter > (fil_len // 5):
                         log_page_number -= 5
                         log_page_counter -= 1
                         logs.clear()
-                        needed = all_files[log_page_number:log_page_number + 5]
+                        needed = files[log_page_number:log_page_number + 5]
                         for i in range(len(needed)):
                             if os.path.splitext(needed[i])[1] in allowed_splits:
                                 obj = Log(dirs + '/' + needed[i], i, needed[i])
